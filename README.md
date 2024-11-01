@@ -15,11 +15,11 @@ Entrada:
 2                   //   Elemento a ser buscado no conjunto A
 
 
-***
+
 Se o último número for 1, a operação de verificação de pertencimento é realizada para verificar se o elemento está no conjunto A.
 Se o último número for 2, realiza-se a operação de união entre dois conjuntos.
 Se o último número for 3, realiza-se a operação de interseção entre dois conjuntos.
-
+***
 
 SAIDA 
 
