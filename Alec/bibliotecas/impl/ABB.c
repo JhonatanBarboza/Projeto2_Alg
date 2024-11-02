@@ -17,7 +17,7 @@ struct abb_{
   int tamanho;
 };
 
-NO *buscaBinaria(NO *noRaiz, int chave);
+NO *buscaBinariaABB(NO *noRaiz, int chave);
 NO *inserirABB(NO *noRaiz, NO *noNovo);
 NO *removeRaizABB(NO *noRaiz);
 void imprimirOrdenada(NO *noRaiz);
@@ -54,6 +54,8 @@ bool abb_inserir(ABB *arvore, int elemento){
     return false;
   }
 
+  if(abb_busca(arvore, elemento) == elemento) return false;
+
   NO *noNovo = no_criar(elemento, NULL, NULL);
 
   arvore->raiz = inserirABB(arvore->raiz, noNovo);
@@ -75,50 +77,12 @@ int abb_remover(ABB *arvore){
     printf("Erro em abb_remover: arvore->raiz == NULL\n");
     return ERRO;
   }
+  if(arvore->tamanho == 0) return ERRO;
 
   NO *raizVelha = arvore->raiz;
   int elemRemovido = raizVelha->chave;
 
   arvore->raiz = removeRaizABB(raizVelha);
-
-/* REMOVER ELEMENTO ESPECÍFICO -> Desnecessário nesse caso
-  if(chave == arvore->raiz->chave){
-    NO *raizVelha = arvore->raiz;
-    int elemRemovido = raizVelha->chave;
-
-    arvore->raiz = removeRaizABB(raizVelha);
-    arvore->tamanho--;
-
-    return elemRemovido;
-  }
-
-  NO *noPai = NULL;
-  NO *noPercorrerArvore = arvore->raiz;
-  int posicao = NA;
-
-  while((noPercorrerArvore != NULL) && (noPercorrerArvore->chave != chave)){
-    posicao = NA;
-    noPai = noPercorrerArvore;
-    if(noPercorrerArvore->chave > chave){
-      noPercorrerArvore = noPercorrerArvore->noEsq;
-      posicao = ESQ;
-    }
-    else{
-      noPercorrerArvore = noPercorrerArvore->noDir;
-      posicao = DIR;
-    }
-  }
-
-  if(noPercorrerArvore == NULL) return ERRO; //Elemento não encontrado
-
-  int elemRemovido = noPercorrerArvore->chave;
-  if(posicao == ESQ){
-    noPai->noEsq = removeRaizABB(noPai->noEsq);
-  }
-  else{
-    noPai->noDir = removeRaizABB(noPai->noDir);
-  }
-*/
 
   arvore->tamanho--;
   return elemRemovido;
@@ -132,12 +96,12 @@ void abb_imprimir(ABB *arvore, bool ordenada){
 
   if(ordenada){
     imprimirOrdenada(arvore->raiz);
-    printf("\n");
   }
   else{
     imprimirNaoOrdenada(arvore->raiz);
-    printf("\n");
   }
+  printf("\n");
+  fflush(stdout);
 
   return;
 }
@@ -147,8 +111,9 @@ int abb_busca(ABB *arvore, int chave){
     printf("Erro em abb_busca: arvore == NULL\n");
     return ERRO;
   }
+  if(arvore->tamanho == 0) return ERRO;
 
-  NO *noChave = buscaBinaria(arvore->raiz, chave);
+  NO *noChave = buscaBinariaABB(arvore->raiz, chave);
   if(noChave == NULL) return ERRO;
 
   return noChave->chave;
@@ -172,16 +137,16 @@ ABB *abb_copiar(ABB *arvore){
   return copiaArvore;
 }
 
-NO *buscaBinaria(NO *noRaiz, int chave){
+NO *buscaBinariaABB(NO *noRaiz, int chave){
   if((noRaiz == NULL) || (noRaiz->chave == chave)){
     return noRaiz;
   }
 
   if(noRaiz->chave > chave){
-    return buscaBinaria(noRaiz->noEsq, chave);
+    return buscaBinariaABB(noRaiz->noEsq, chave);
   }
   else{
-    return buscaBinaria(noRaiz->noDir, chave);
+    return buscaBinariaABB(noRaiz->noDir, chave);
   }
 }
 
@@ -250,6 +215,7 @@ void imprimirNaoOrdenada(NO *noRaiz){
     imprimirNaoOrdenada(noRaiz->noEsq);
     imprimirNaoOrdenada(noRaiz->noDir);
   }
+  fflush(stdout);
 
   return;
 }
@@ -260,6 +226,7 @@ void imprimirOrdenada(NO *noRaiz){
     printf("%d ", noRaiz->chave);
     imprimirOrdenada(noRaiz->noDir);
   }
+  fflush(stdout);
 
   return;
 }

@@ -1,19 +1,17 @@
 #ifndef LISTA_H
-    #define LISTA_H
-    #include <stdbool.h>
+  #define LISTA_H
 
-    #define TAM_MAX 100000
-    #define ERRO 1000010
+  #define TAM_MAX 100000
+  #define ERRO 1000010
 
-    typedef struct lista_ LISTA;
+  typedef struct lista_ LISTA;
 
-    void Lista_Apagar (LISTA **lista); 
-    int Lista_Remover (LISTA *lista);
-    void Lista_Imprimir (LISTA *lista);
-    LISTA* Lista_Criar (void);
-    int Lista_Consultar (LISTA *lista, int indice);
-    bool busca_binaria(LISTA *lista, int elemento);  
-    void Lista_Inserir (LISTA* lista, int elemento);
-    LISTA* Lista_Copiar (LISTA* lista);
+  LISTA *lista_criar(void);
+  void lista_apagar(LISTA **lista);
+  bool lista_inserir(LISTA *lista, int elemento);
+  int lista_remover(LISTA *lista);
+  void lista_imprimir(LISTA *lista);
+  int lista_busca(LISTA *lista, int chave);
+  LISTA *lista_copiar(LISTA *lista);
 
 #endif 
