@@ -14,5 +14,6 @@
     int Lista_Consultar (LISTA *lista, int indice);
     bool busca_binaria(LISTA *lista, int elemento);  
     void Lista_Inserir (LISTA* lista, int elemento);
+    LISTA* Lista_Copiar (LISTA* lista);
 
 #endif 

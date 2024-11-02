@@ -92,3 +92,16 @@ int Lista_Consultar (LISTA *lista, int i){
     return lista->vet[i];
 } 
 
+LISTA* Lista_Copiar (LISTA* lista){
+    if(lista == NULL) return NULL;
+
+    LISTA *listaCopia = Lista_Criar();
+    if(listaCopia == NULL) return NULL;
+
+    for(int i = 0; i < lista->tamanho; i++){
+        listaCopia->vet[i] = lista->vet[i];
+    }
+    listaCopia->tamanho = lista->tamanho;
+
+    return listaCopia;
+}

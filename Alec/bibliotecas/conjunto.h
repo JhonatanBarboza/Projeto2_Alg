@@ -12,7 +12,8 @@
   int conjunto_remover(CONJUNTO *conj);
   void conjunto_imprimir(CONJUNTO *conj);
   bool conjunto_pertence(CONJUNTO *conj, int elemento);
-  CONJUNTO *conjunto_uniao(CONJUNTO *conjA, CONJUNTO *conjB);
-  CONJUNTO *conjunto_interseccao(CONJUNTO *conjA, CONJUNTO *conjB);
+  CONJUNTO *conjunto_uniao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal);
+  CONJUNTO *conjunto_interseccao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal);
+  CONJUNTO *conjunto_copiar(CONJUNTO *conj);
 
 #endif
