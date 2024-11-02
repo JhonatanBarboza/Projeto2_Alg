@@ -72,7 +72,7 @@ int Lista_Remover(LISTA *lista) {
     lista->vet[lista->tamanho] = ERRO;
     lista->tamanho--;
 
-    return ERRO;
+    return temp;
 }
 
 void Lista_Imprimir(LISTA *lista) {
