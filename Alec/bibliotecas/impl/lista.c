@@ -13,10 +13,7 @@ int buscaBinariaLista(int v[], int inicio, int fim, int chave);
 
 LISTA *lista_criar(void){
   LISTA *lista = (LISTA *) malloc(sizeof(LISTA));
-  if(lista == NULL){
-    printf("Erro em lista_criar: lista == NULL\n");
-    return NULL;
-  }
+  if(lista == NULL) return NULL;
 
   lista->tamanho = 0;
   return lista;
@@ -31,16 +28,18 @@ void lista_apagar(LISTA **lista){
 }
 
 bool lista_inserir(LISTA *lista, int elemento){
-  if(lista == NULL){
-    printf("Erro em lista_inserir: lista == NULL\n");
-    return false;
-  }
+  if(lista == NULL) return false;
   if(lista->tamanho > TAM_MAX) return false;
 
+  /*Percorremos o vetor até encontrarmos o primeiro
+  elemento maior que o elemento a ser inserido*/
   int i = 0;
   while((i < lista->tamanho) && (lista->vet[i] < elemento)) i++;
+  /*Se o elemento já existe na lista, ele não é inserido*/
   if(lista_busca(lista, elemento) == elemento) return false;
 
+  /*Deslocamos parte do vetor para a direita (a partir da
+  posição correta), abrindo espaço para o elemento ser inserido*/
   for(int j = lista->tamanho; j > i; j--){
     lista->vet[j] = lista->vet[j-1];
   }
@@ -51,13 +50,11 @@ bool lista_inserir(LISTA *lista, int elemento){
 }
 
 int lista_remover(LISTA *lista){
-  if(lista == NULL){
-    printf("Erro em lista_remover: lista == NULL\n");
-    return ERRO;
-  }
+  if(lista == NULL) return ERRO;
   if(lista->tamanho == 0) return ERRO;
 
   int elemRemovido = lista->vet[lista->tamanho - 1];
+  /*Ao remover, substituimos o elemento por ERRO*/
   lista->vet[lista->tamanho - 1] = ERRO;
   lista->tamanho--;
 
@@ -65,25 +62,21 @@ int lista_remover(LISTA *lista){
 }
 
 void lista_imprimir(LISTA *lista){
-  if(lista == NULL){
-    printf("Erro em lista_imprimir: lista == NULL\n");
-    return;
-  }
+  if(lista == NULL) return;
 
   for(int i = 0; i < lista->tamanho; i++){
+    /*Devido à forma como removemos, checamos o elemento
+    para não imprimirmos itens removidos*/
     if(lista->vet[i] != ERRO) printf("%d ", lista->vet[i]);
   }
   printf("\n");
-  fflush(stdout);
 
   return;
 }
 
+/*Retorna a chave se ela foi encontrada, ERRO senão*/
 int lista_busca(LISTA *lista, int chave){
-  if(lista == NULL){
-    printf("Erro em lista_busca: lista == NULL\n");
-    return ERRO;
-  }
+  if(lista == NULL) return ERRO;
   if(lista->tamanho == 0) return ERRO;
 
   if(buscaBinariaLista(lista->vet, 0, lista->tamanho - 1, chave) != ERRO) return chave;
@@ -91,16 +84,10 @@ int lista_busca(LISTA *lista, int chave){
 }
 
 LISTA *lista_copiar(LISTA *lista){
-  if(lista == NULL){
-    printf("Erro em lista_copiar: lista == NULL\n");
-    return NULL;
-  }
+  if(lista == NULL) return NULL;
 
   LISTA *listaCopia = lista_criar();
-  if(listaCopia == NULL){
-    printf("Erro em lista_copiar: listaCopia == NULL\n");
-    return NULL;
-  }
+  if(listaCopia == NULL) return NULL;
 
   for(int i = 0; i < lista->tamanho; i++){
     lista_inserir(listaCopia, lista->vet[i]);
@@ -109,6 +96,7 @@ LISTA *lista_copiar(LISTA *lista){
   return listaCopia;
 }
 
+/*Retorna a posição do elemento em que ele foi encontrado (ERRO se não foi)*/
 int buscaBinariaLista(int v[], int inicio, int fim, int chave){
   if(inicio > fim) return ERRO;
 

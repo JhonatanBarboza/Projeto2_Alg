@@ -8,13 +8,13 @@
 
 struct conjunto_{
   int TAD;
-  LISTA *conjuntoLista;
+  LISTA *conjuntoLista; /*Um desses ponteiros não será utilizado*/
   ABB *conjuntoABB;
   int tamanho;
 };
 
 CONJUNTO *conjunto_criar(int TAD){
-  if((TAD != TAD_LISTA) && (TAD != TAD_ARVORE)) return NULL;
+  if((TAD != TAD_LISTA) && (TAD != TAD_ARVORE)) return NULL; //TAD inválido
 
   CONJUNTO *conjunto = (CONJUNTO *) malloc(sizeof(CONJUNTO));
   if(conjunto == NULL) return NULL;
@@ -26,8 +26,8 @@ CONJUNTO *conjunto_criar(int TAD){
     conjunto->conjuntoABB = NULL;
   }
   else if(TAD == TAD_ARVORE){
-    conjunto->conjuntoABB = abb_criar();
     conjunto->conjuntoLista = NULL;
+    conjunto->conjuntoABB = abb_criar();
   }
 
   return conjunto;
@@ -86,7 +86,7 @@ void conjunto_imprimir(CONJUNTO *conj){
     lista_imprimir(conj->conjuntoLista);
   }
   else{
-    abb_imprimir(conj->conjuntoABB, true);
+    abb_imprimir(conj->conjuntoABB, true); //true: referente a imprimir a árvore ordenadamente ou não
   }
 
   return;
@@ -102,6 +102,7 @@ bool conjunto_pertence(CONJUNTO *conj, int elemento){
     if(elemento == abb_busca(conj->conjuntoABB, elemento)) return true;
   }
 
+  //Se a busca não retornar o elemento buscado (não pertence):
   return false;
 }
 
@@ -110,11 +111,20 @@ CONJUNTO *conjunto_uniao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal){
 
   CONJUNTO *conjA = conjunto_copiar(conjAOriginal);
   CONJUNTO *conjB = conjunto_copiar(conjBOriginal);
-  if((conjA == NULL) || (conjB == NULL)) return NULL;
+  if((conjA == NULL) || (conjB == NULL)){
+    conjunto_apagar(&conjA);
+    conjunto_apagar(&conjB);
+    return NULL;
+  }
 
   CONJUNTO *conjUniao = conjunto_criar(conjAOriginal->TAD);
+  if(conjUniao == NULL){
+    conjunto_apagar(&conjUniao);
+    return NULL;
+  }
 
   if(conjUniao->TAD == TAD_LISTA){
+    /*Inserindo todos os elementos de A em conjUniao*/
     for(int i = 0; i < conjA->tamanho; i++){
       int elemento = lista_remover(conjA->conjuntoLista);
       lista_inserir(conjUniao->conjuntoLista, elemento);
@@ -122,18 +132,19 @@ CONJUNTO *conjunto_uniao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal){
       conjUniao->tamanho++;
     }
 
+    /*Inserindo os elementos de B em conjUniao*/
     for(int i = 0; i < conjB->tamanho; i++){
       int elemento = lista_remover(conjB->conjuntoLista);
+      lista_inserir(conjUniao->conjuntoLista, elemento);
 
-      if(lista_busca(conjUniao->conjuntoLista, elemento) == ERRO){
-        lista_inserir(conjUniao->conjuntoLista, elemento);
-
-        conjUniao->tamanho++;
-      }
+      conjUniao->tamanho++;
     }
+
+    /*Observação: a lista não insere números que já aparecem nela*/
   }
 
   if(conjUniao->TAD == TAD_ARVORE){
+    /*Mesma lógica e observação que na lista*/
     for(int i = 0; i < conjA->tamanho; i++){
       int elemento = abb_remover(conjA->conjuntoABB);
       abb_inserir(conjUniao->conjuntoABB, elemento);
@@ -159,12 +170,19 @@ CONJUNTO *conjunto_interseccao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal)
   if((conjAOriginal == NULL) || (conjBOriginal == NULL)) return NULL;
 
   CONJUNTO *conjA = conjunto_copiar(conjAOriginal);
-  if(conjA == NULL) return NULL;
+  if(conjA == NULL){
+    conjunto_apagar(&conjA);
+    return NULL;
+  }
 
   CONJUNTO *conjIntersec = conjunto_criar(conjAOriginal->TAD);
-  if(conjIntersec == NULL) return NULL;
+  if(conjIntersec == NULL){
+    conjunto_apagar(&conjIntersec);
+    return NULL;
+  }
 
   if(conjIntersec->TAD == TAD_LISTA){
+    /*Somente inserindo os elementos de A se eles aparecerem em B*/
     for(int i = 0; i < conjA->tamanho; i++){
       int elemento = lista_remover(conjA->conjuntoLista);
 
@@ -177,6 +195,7 @@ CONJUNTO *conjunto_interseccao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal)
   }
 
   if(conjIntersec->TAD == TAD_ARVORE){
+    /*Mesma lógica*/
     for(int i = 0; i < conjA->tamanho; i++){
       int elemento = abb_remover(conjA->conjuntoABB);
 
@@ -193,14 +212,10 @@ CONJUNTO *conjunto_interseccao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal)
 }
 
 CONJUNTO *conjunto_copiar(CONJUNTO *conj){
-  if(conj == NULL){
-    printf("Erro em conjunto_copiar: conj == NULL\n");
-    return NULL;
-  }
+  if(conj == NULL) return NULL;
 
   CONJUNTO *copiaConj = conjunto_criar(conj->TAD);
   if(copiaConj == NULL){
-    printf("Erro em conjunto_copiar: copiaConj == NULL\n");
     conjunto_apagar(&copiaConj);
     return NULL;
   }
