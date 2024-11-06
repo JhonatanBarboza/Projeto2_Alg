@@ -17,7 +17,10 @@ struct abb_{
   int tamanho;
 };
 
-NO *buscaBinaria(NO *noRaiz, int chave);
+/* ÁRVORE BINÁRIA DE BUSCA */
+
+/*Funções auxiliares*/
+NO *buscaBinariaABB(NO *noRaiz, int chave);
 NO *inserirABB(NO *noRaiz, NO *noNovo);
 NO *removeRaizABB(NO *noRaiz);
 void imprimirOrdenada(NO *noRaiz);
@@ -25,13 +28,11 @@ void imprimirNaoOrdenada(NO *noRaiz);
 NO *no_criar(int chave, NO *noEsq, NO *noDir);
 void no_apagar(NO **no);
 void no_apagar_recursivo(NO *no);
+NO *no_copiar_recursivo(NO *no);
 
 ABB *abb_criar(void){
   ABB *arvore = (ABB *) malloc(sizeof(ABB));
-  if(arvore == NULL){
-    printf("Erro em abb_criar: arvore == NULL\n");
-    return NULL;
-  }
+  if(arvore == NULL) return NULL;
 
   arvore->raiz = NULL;
   arvore->tamanho = 0;
@@ -41,6 +42,7 @@ ABB *abb_criar(void){
 void abb_apagar(ABB **arvore){
   if(*arvore == NULL) return;
 
+  /*Apaga todos os nós da árvore recursivamente, começando pela raíz*/
   no_apagar_recursivo((*arvore)->raiz);
 
   free(*arvore);
@@ -48,124 +50,88 @@ void abb_apagar(ABB **arvore){
 }
 
 bool abb_inserir(ABB *arvore, int elemento){
-  if(arvore == NULL){
-    printf("Erro 1 em abb_inserir: arvore == NULL\n");
-    return false;
-  }
+  if(arvore == NULL) return false;
+
+  /*Não inserimos o elemento se ele já existir na árvore*/
+  if(abb_busca(arvore, elemento) == elemento) return false;
 
   NO *noNovo = no_criar(elemento, NULL, NULL);
+  if(noNovo == NULL) return false;
 
+  /*inserirABB() explicada mais adiante*/
   arvore->raiz = inserirABB(arvore->raiz, noNovo);
-  if(arvore->raiz == NULL){
-    printf("Erro 2 em abb_inserir: arvore->raiz == NULL\n");
-    return false;
-  }
+  if(arvore->raiz == NULL) return false;
 
   arvore->tamanho++;
   return true;
 }
 
 int abb_remover(ABB *arvore){
-  if(arvore == NULL){
-    printf("Erro em abb_remover: arvore == NULL\n");
-    return ERRO;
-  }
-  if(arvore->raiz == NULL){
-    printf("Erro em abb_remover: arvore->raiz == NULL\n");
-    return ERRO;
-  }
+  if(arvore == NULL) return ERRO;
+  if(arvore->raiz == NULL) return ERRO;
+  if(arvore->tamanho == 0) return ERRO;
 
   NO *raizVelha = arvore->raiz;
   int elemRemovido = raizVelha->chave;
 
+  /*removeRaizABB() explicado mais adiante*/
   arvore->raiz = removeRaizABB(raizVelha);
-
-/* REMOVER ELEMENTO ESPECÍFICO
-  if(chave == arvore->raiz->chave){
-    NO *raizVelha = arvore->raiz;
-    int elemRemovido = raizVelha->chave;
-
-    arvore->raiz = removeRaizABB(raizVelha);
-    arvore->tamanho--;
-
-    return elemRemovido;
-  }
-
-  NO *noPai = NULL;
-  NO *noPercorrerArvore = arvore->raiz;
-  int posicao = NA;
-
-  while((noPercorrerArvore != NULL) && (noPercorrerArvore->chave != chave)){
-    posicao = NA;
-    noPai = noPercorrerArvore;
-    if(noPercorrerArvore->chave > chave){
-      noPercorrerArvore = noPercorrerArvore->noEsq;
-      posicao = ESQ;
-    }
-    else{
-      noPercorrerArvore = noPercorrerArvore->noDir;
-      posicao = DIR;
-    }
-  }
-
-  if(noPercorrerArvore == NULL) return ERRO; //Elemento não encontrado
-
-  int elemRemovido = noPercorrerArvore->chave;
-  if(posicao == ESQ){
-    noPai->noEsq = removeRaizABB(noPai->noEsq);
-  }
-  else{
-    noPai->noDir = removeRaizABB(noPai->noDir);
-  }
-*/
 
   arvore->tamanho--;
   return elemRemovido;
 }
 
 void abb_imprimir(ABB *arvore, bool ordenada){
-  if(arvore == NULL){
-    printf("Erro em abb_imprimir: arvore == NULL\n");
-    return;
-  }
+  if(arvore == NULL) return;
 
   if(ordenada){
     imprimirOrdenada(arvore->raiz);
-    printf("\n");
   }
   else{
     imprimirNaoOrdenada(arvore->raiz);
-    printf("\n");
   }
+  printf("\n");
 
   return;
 }
 
 int abb_busca(ABB *arvore, int chave){
-  if(arvore == NULL){
-    printf("Erro em abb_busca: arvore == NULL\n");
-    return ERRO;
-  }
+  if(arvore == NULL) return ERRO;
+  if(arvore->tamanho == 0) return ERRO;
 
-  NO *noChave = buscaBinaria(arvore->raiz, chave);
+  NO *noChave = buscaBinariaABB(arvore->raiz, chave);
   if(noChave == NULL) return ERRO;
 
   return noChave->chave;
 }
 
-NO *buscaBinaria(NO *noRaiz, int chave){
+ABB *abb_copiar(ABB *arvore){
+  if(arvore == NULL) return NULL;
+
+  ABB *copiaArvore = abb_criar();
+  if(copiaArvore == NULL) return NULL;
+
+  copiaArvore->raiz = no_copiar_recursivo(arvore->raiz);
+  copiaArvore->tamanho = arvore->tamanho;
+
+  return copiaArvore;
+}
+
+NO *buscaBinariaABB(NO *noRaiz, int chave){
   if((noRaiz == NULL) || (noRaiz->chave == chave)){
     return noRaiz;
   }
 
   if(noRaiz->chave > chave){
-    return buscaBinaria(noRaiz->noEsq, chave);
+    return buscaBinariaABB(noRaiz->noEsq, chave);
   }
   else{
-    return buscaBinaria(noRaiz->noDir, chave);
+    return buscaBinariaABB(noRaiz->noDir, chave);
   }
 }
 
+/*Percorre a árvore recursivamente e insere
+o nó quando encontrar um filho nulo*/
 NO *inserirABB(NO *noRaiz, NO *noNovo){
   if(noRaiz == NULL){
     return noNovo;
@@ -181,12 +147,11 @@ NO *inserirABB(NO *noRaiz, NO *noNovo){
   return noRaiz;
 }
 
+/*Remove um nó e o subtitui por um de seus filhos*/
 NO *removeRaizABB(NO *noRaiz){
-  if(noRaiz == NULL){
-    printf("Erro em removeRaizABB: noRaiz == NULL\n");
-    return NULL;
-  }
+  if(noRaiz == NULL) return NULL;
 
+  /*Nó a ser removido com somente um filho*/
   NO *noAuxP, *noAuxQ;
   if(noRaiz->noEsq == NULL){
     noAuxQ = noRaiz->noDir;
@@ -205,6 +170,10 @@ NO *removeRaizABB(NO *noRaiz){
     return noAuxQ;
   }
   
+  /*Nó com os dois filhos*/
+  /*Percorremos a árvore até achar o maior nó passível
+  de substituir o nó a ser removido (o maior nó passível
+  será aquele da direita com filho nulo)*/
   noAuxP = noRaiz;
   noAuxQ = noRaiz->noEsq;
   while(noAuxQ->noDir != NULL){
@@ -247,10 +216,7 @@ void imprimirOrdenada(NO *noRaiz){
 
 NO *no_criar(int chave, NO *noEsq, NO *noDir){
   NO *noNovo = (NO *) malloc(sizeof(NO));
-  if(noNovo == NULL){
-    printf("Erro em noCriar: noNovo == NULL\n");
-    return NULL;
-  }
+  if(noNovo == NULL) return NULL;
 
   noNovo->chave = chave;
   noNovo->noEsq = noEsq;
@@ -274,4 +240,16 @@ void no_apagar_recursivo(NO *no){
   no_apagar(&no);
 
   return;
+}
+
+NO *no_copiar_recursivo(NO *no){
+  if(no == NULL) return NULL;
+
+  NO *noNovo = no_criar(no->chave, NULL, NULL);
+  if(noNovo == NULL) return NULL;
+
+  noNovo->noEsq = no_copiar_recursivo(no->noEsq);
+  noNovo->noDir = no_copiar_recursivo(no->noDir);
+
+  return noNovo;
 }

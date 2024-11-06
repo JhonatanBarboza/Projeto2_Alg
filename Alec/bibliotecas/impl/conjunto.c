@@ -8,13 +8,13 @@
 
 struct conjunto_{
   int TAD;
-  LISTA *conjuntoLista; /*Um desses ponteiros não será utilizado*/
+  LISTA *conjuntoLista;
   ABB *conjuntoABB;
   int tamanho;
 };
 
 CONJUNTO *conjunto_criar(int TAD){
-  if((TAD != TAD_LISTA) && (TAD != TAD_ARVORE)) return NULL; //TAD inválido
+  if((TAD != TAD_LISTA) && (TAD != TAD_ARVORE)) return NULL;
 
   CONJUNTO *conjunto = (CONJUNTO *) malloc(sizeof(CONJUNTO));
   if(conjunto == NULL) return NULL;
@@ -22,12 +22,12 @@ CONJUNTO *conjunto_criar(int TAD){
   conjunto->TAD = TAD;
   conjunto->tamanho = 0;
   if(TAD == TAD_LISTA){
-    conjunto->conjuntoLista = lista_criar();
+    conjunto->conjuntoLista = Lista_Criar();
     conjunto->conjuntoABB = NULL;
   }
   else if(TAD == TAD_ARVORE){
-    conjunto->conjuntoLista = NULL;
     conjunto->conjuntoABB = abb_criar();
+    conjunto->conjuntoLista = NULL;
   }
 
   return conjunto;
@@ -37,7 +37,7 @@ bool conjunto_apagar(CONJUNTO **conj){
   if(*conj == NULL) return true;
 
   if((*conj)->TAD == TAD_LISTA){
-    lista_apagar(&((*conj)->conjuntoLista));
+    Lista_Apagar(&((*conj)->conjuntoLista));
   }
   else{
     abb_apagar(&((*conj)->conjuntoABB));
@@ -52,7 +52,7 @@ bool conjunto_inserir(CONJUNTO *conj, int elemento){
   if(conj == NULL) return false;
 
   if(conj->TAD == TAD_LISTA){
-    lista_inserir(conj->conjuntoLista, elemento);
+    Lista_Inserir(conj->conjuntoLista, elemento);
   }
   else{
     abb_inserir(conj->conjuntoABB, elemento);
@@ -67,7 +67,7 @@ int conjunto_remover(CONJUNTO *conj){
 
   int elementoRemovido;
   if(conj->TAD == TAD_LISTA){
-    elementoRemovido =  lista_remover(conj->conjuntoLista);
+    elementoRemovido =  Lista_Remover(conj->conjuntoLista);
   }
   else{
     elementoRemovido = abb_remover(conj->conjuntoABB);
@@ -83,10 +83,10 @@ void conjunto_imprimir(CONJUNTO *conj){
   if(conj == NULL) return;
 
   if(conj->TAD == TAD_LISTA){
-    lista_imprimir(conj->conjuntoLista);
+    Lista_Imprimir(conj->conjuntoLista);
   }
   else{
-    abb_imprimir(conj->conjuntoABB, true); //true: referente a imprimir a árvore ordenadamente ou não
+    abb_imprimir(conj->conjuntoABB, true);
   }
 
   return;
@@ -96,55 +96,40 @@ bool conjunto_pertence(CONJUNTO *conj, int elemento){
   if(conj == NULL) return false;
 
   if(conj->TAD == TAD_LISTA){
-    if(elemento == lista_busca(conj->conjuntoLista, elemento)) return true;
+    return busca_binaria(conj->conjuntoLista, elemento);
   }
   else{
     if(elemento == abb_busca(conj->conjuntoABB, elemento)) return true;
   }
 
-  //Se a busca não retornar o elemento buscado (não pertence):
   return false;
 }
 
-CONJUNTO *conjunto_uniao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal){
-  if((conjAOriginal == NULL) || (conjBOriginal == NULL)) return NULL;
+CONJUNTO *conjunto_uniao(CONJUNTO *conjA, CONJUNTO *conjB){
+  if((conjA == NULL) || (conjB == NULL)) return NULL;
 
-  CONJUNTO *conjA = conjunto_copiar(conjAOriginal);
-  CONJUNTO *conjB = conjunto_copiar(conjBOriginal);
-  if((conjA == NULL) || (conjB == NULL)){
-    conjunto_apagar(&conjA);
-    conjunto_apagar(&conjB);
-    return NULL;
-  }
-
-  CONJUNTO *conjUniao = conjunto_criar(conjAOriginal->TAD);
-  if(conjUniao == NULL){
-    conjunto_apagar(&conjUniao);
-    return NULL;
-  }
+  CONJUNTO *conjUniao = conjunto_criar(conjA->TAD);
 
   if(conjUniao->TAD == TAD_LISTA){
-    /*Inserindo todos os elementos de A em conjUniao*/
     for(int i = 0; i < conjA->tamanho; i++){
-      int elemento = lista_remover(conjA->conjuntoLista);
-      lista_inserir(conjUniao->conjuntoLista, elemento);
+      int elemento = Lista_Remover(conjA->conjuntoLista);
+      Lista_Inserir(conjUniao->conjuntoLista, elemento);
 
       conjUniao->tamanho++;
     }
 
-    /*Inserindo os elementos de B em conjUniao*/
     for(int i = 0; i < conjB->tamanho; i++){
-      int elemento = lista_remover(conjB->conjuntoLista);
-      lista_inserir(conjUniao->conjuntoLista, elemento);
+      int elemento = Lista_Remover(conjB->conjuntoLista);
 
-      conjUniao->tamanho++;
+      if(!busca_binaria(conjUniao->conjuntoLista, elemento)){
+        Lista_Inserir(conjUniao->conjuntoLista, elemento);
+
+        conjUniao->tamanho++;
+      }
     }
-
-    /*Observação: a lista não insere números que já aparecem nela*/
   }
 
   if(conjUniao->TAD == TAD_ARVORE){
-    /*Mesma lógica e observação que na lista*/
     for(int i = 0; i < conjA->tamanho; i++){
       int elemento = abb_remover(conjA->conjuntoABB);
       abb_inserir(conjUniao->conjuntoABB, elemento);
@@ -163,31 +148,32 @@ CONJUNTO *conjunto_uniao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal){
     }
   }
 
+  conjunto_apagar(&conjA);
+  conjunto_apagar(&conjB);
+
   return conjUniao;
 }
 
-CONJUNTO *conjunto_interseccao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal){
-  if((conjAOriginal == NULL) || (conjBOriginal == NULL)) return NULL;
+CONJUNTO *conjunto_interseccao(CONJUNTO *conjA, CONJUNTO *conjB){
+  if((conjA == NULL) || (conjB == NULL)) return NULL;
 
-  CONJUNTO *conjA = conjunto_copiar(conjAOriginal);
-  if(conjA == NULL){
-    conjunto_apagar(&conjA);
-    return NULL;
-  }
-
-  CONJUNTO *conjIntersec = conjunto_criar(conjAOriginal->TAD);
-  if(conjIntersec == NULL){
-    conjunto_apagar(&conjIntersec);
-    return NULL;
-  }
+  CONJUNTO *conjIntersec = conjunto_criar(conjA->TAD);
 
   if(conjIntersec->TAD == TAD_LISTA){
-    /*Somente inserindo os elementos de A se eles aparecerem em B*/
     for(int i = 0; i < conjA->tamanho; i++){
-      int elemento = lista_remover(conjA->conjuntoLista);
+      int elemento = Lista_Remover(conjA->conjuntoLista);
 
-      if(conjunto_pertence(conjBOriginal, elemento)){
-        lista_inserir(conjIntersec->conjuntoLista, elemento);
+      if(busca_binaria(conjB->conjuntoLista, elemento)){
+        Lista_Inserir(conjIntersec->conjuntoLista, elemento);
+
+        conjIntersec->tamanho++;
+      }
+    }
+    for(int i = 0; i < conjB->tamanho; i++){
+      int elemento = Lista_Remover(conjB->conjuntoLista);
+
+      if(busca_binaria(conjA->conjuntoLista, elemento)){
+        Lista_Inserir(conjIntersec->conjuntoLista, elemento);
 
         conjIntersec->tamanho++;
       }
@@ -195,39 +181,28 @@ CONJUNTO *conjunto_interseccao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal)
   }
 
   if(conjIntersec->TAD == TAD_ARVORE){
-    /*Mesma lógica*/
     for(int i = 0; i < conjA->tamanho; i++){
       int elemento = abb_remover(conjA->conjuntoABB);
 
-      if(conjunto_pertence(conjBOriginal, elemento)){
+      if(abb_busca(conjB->conjuntoABB, elemento) == elemento){
         abb_inserir(conjIntersec->conjuntoABB, elemento);
 
         conjIntersec->tamanho++;
       }
     }
+    for(int i = 0; i < conjB->tamanho; i++){
+      int elemento = abb_remover(conjB->conjuntoABB);
+
+      if(abb_busca(conjA->conjuntoABB, elemento) == elemento){
+        abb_inserir(conjIntersec->conjuntoABB, elemento);
+        
+        conjIntersec->tamanho++;
+      }
+    } 
   }
 
   conjunto_apagar(&conjA);
+  conjunto_apagar(&conjB);
+
   return conjIntersec;
-}
-
-CONJUNTO *conjunto_copiar(CONJUNTO *conj){
-  if(conj == NULL) return NULL;
-
-  CONJUNTO *copiaConj = conjunto_criar(conj->TAD);
-  if(copiaConj == NULL){
-    conjunto_apagar(&copiaConj);
-    return NULL;
-  }
-  copiaConj->TAD = conj->TAD;
-
-  if(copiaConj->TAD == TAD_LISTA){
-    copiaConj->conjuntoLista = lista_copiar(conj->conjuntoLista);
-  }
-  else{
-    copiaConj->conjuntoABB = abb_copiar(conj->conjuntoABB);
-  }
-
-  copiaConj->tamanho = conj->tamanho;
-  return copiaConj;
 }

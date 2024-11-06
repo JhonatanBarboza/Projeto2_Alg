@@ -1,5 +1,6 @@
 all: compile
 	gcc abb.o lista.o conjunto.o main.o -o main -std=c99 -Wall
+	rm *.o
 
 compile:
 	gcc -c ../bibliotecas/impl/ABB.c -o abb.o
@@ -12,4 +13,3 @@ run:
 
 clean:
 	rm -f main
-	rm *.o
