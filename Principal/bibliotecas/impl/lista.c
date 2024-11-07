@@ -49,26 +49,22 @@ bool lista_inserir(LISTA *lista, int elemento){
   return true;
 }
 
-int lista_remover(LISTA *lista, int elemento) {   // ********************************
-    // Retorna ERRO se a lista for NULL ou vazia
-    if (lista == NULL || lista->tamanho == 0) return ERRO;
+int lista_remover(LISTA *lista, int elemento) {
+  if (lista == NULL || lista->tamanho == 0) return ERRO;
 
-    // Busca a posição do elemento usando busca binária
-    int i = buscaBinariaLista(lista->vet, 0, lista->tamanho - 1, elemento);
-
-    // Se o elemento não for encontrado, retorna ERRO
-    if (i == ERRO) return ERRO;
+  int posicaoElem = buscaBinariaLista(lista->vet, 0, lista->tamanho - 1, elemento);
+  if (posicaoElem == ERRO) return ERRO;
 
     // Desloca elementos para a esquerda para preencher o espaço
-    for (int j = i; j < lista->tamanho - 1; j++) {
-        lista->vet[j] = lista->vet[j + 1];
-    }
+  for(int j = posicaoElem; j < lista->tamanho - 1; j++){
+    lista->vet[j] = lista->vet[j + 1];
+  }
 
-    // Diminui o tamanho da lista e marca a última posição como ERRO
-    lista->vet[lista->tamanho - 1] = ERRO;
-    lista->tamanho--;
+  // Diminui o tamanho da lista e marca a última posição como ERRO
+  lista->vet[lista->tamanho - 1] = ERRO;
+  lista->tamanho--;
 
-    return elemento; // Retorna o elemento removido
+  return elemento; // Retorna o elemento removido
 }
 
 
@@ -101,14 +97,17 @@ LISTA *lista_copiar(LISTA *lista){
   if(listaCopia == NULL) return NULL;
 
   for(int i = 0; i < lista->tamanho; i++){
+    /*Inserindo cada elemento da lista original em listaCopia*/
     lista_inserir(listaCopia, lista->vet[i]);
   }
-  listaCopia->tamanho = lista->tamanho;
 
   return listaCopia;
 }
 
-int lista_consultar(LISTA *lista, int indice){   // ********************************
+int lista_consultar(LISTA *lista, int indice){
+  if(lista == NULL) return ERRO;
+  if((indice >= lista->tamanho) || (indice < 0)) return ERRO;
+  
   return lista->vet[indice];
 }
 

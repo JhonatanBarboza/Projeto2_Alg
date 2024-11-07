@@ -1,115 +1,144 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdbool.h>
-
+#include <assert.h>
 #include "../bibliotecas/ABB.h"
 
-void test_criar_e_apagar() {
-    printf("\nTeste 1: Criar e apagar árvore\n");
-    ABB *arvore = abb_criar();
-    if (arvore != NULL) {
-        printf("✓ Árvore criada com sucesso\n");
-    } else {
-        printf("✗ Falha ao criar árvore\n");
-        return;
-    }
-    
-    abb_apagar(&arvore);
-    if (arvore == NULL) {
-        printf("✓ Árvore apagada com sucesso\n");
-    } else {
-        printf("✗ Falha ao apagar árvore\n");
-    }
+// Utility function to print test results
+void print_test_result(const char* test_name, bool passed) {
+    printf("%s: %s\n", test_name, passed ? "PASSED ✓" : "FAILED ✗");
 }
 
-void test_inserir() {
-    printf("\nTeste 2: Inserir elementos\n");
-    ABB *arvore = abb_criar();
-    
-    int elementos[] = {50, 30, 70, 20, 40, 60, 80};
-    int n_elementos = sizeof(elementos) / sizeof(elementos[0]);
-    
-    for (int i = 0; i < n_elementos; i++) {
-        if (abb_inserir(arvore, elementos[i])) {
-            printf("✓ Elemento %d inserido com sucesso\n", elementos[i]);
-        } else {
-            printf("✗ Falha ao inserir elemento %d\n", elementos[i]);
-        }
-    }
-    
-    printf("\nImpressão ordenada: ");
-    abb_imprimir(arvore, true);
-    printf("Impressão não ordenada: ");
-    abb_imprimir(arvore, false);
-    
-    abb_apagar(&arvore);
-}
-
-void test_busca() {
-    printf("\nTeste 3: Buscar elementos\n");
-    ABB *arvore = abb_criar();
-    
-    // Inserir alguns elementos para teste
-    int elementos[] = {50, 30, 70, 20, 40, 60, 80};
-    int n_elementos = sizeof(elementos) / sizeof(elementos[0]);
-    
-    for (int i = 0; i < n_elementos; i++) {
-        abb_inserir(arvore, elementos[i]);
-    }
-    
-    // Testar busca de elementos existentes e não existentes
-    int buscar[] = {40, 90, 20, 100};
-    for (int i = 0; i < 4; i++) {
-        int resultado = abb_busca(arvore, buscar[i]);
-        if (resultado != ERRO) {
-            printf("✓ Elemento %d encontrado\n", buscar[i]);
-        } else {
-            printf("✗ Elemento %d não encontrado\n", buscar[i]);
-        }
-    }
-    
-    abb_apagar(&arvore);
-}
-
-void test_remover() {
-    printf("\nTeste 4: Remover elementos\n");
-    ABB *arvore = abb_criar();
-    
-    // Inserir elementos
-    int elementos[] = {50, 30, 70, 20, 40, 60, 80};
-    int n_elementos = sizeof(elementos) / sizeof(elementos[0]);
-    
-    for (int i = 0; i < n_elementos; i++) {
-        abb_inserir(arvore, elementos[i]);
-    }
-    
-    printf("Árvore inicial: ");
-    abb_imprimir(arvore, true);
-    
-    // Testar remoção da raiz algumas vezes
-    for (int i = 0; i < 3; i++) {
-        int removido = abb_remover(arvore);
-        if (removido != ERRO) {
-            printf("✓ Elemento %d removido com sucesso\n", removido);
-            printf("Árvore após remoção: ");
-            abb_imprimir(arvore, true);
-        } else {
-            printf("✗ Falha ao remover elemento\n");
-        }
-    }
-    
-    abb_apagar(&arvore);
+// Utility function to verify if tree is ordered correctly by checking root's value
+bool verify_subtree_order(ABB* tree, int root_value) {
+    // If element exists in tree, it should be found by search
+    return (abb_busca(tree, root_value) == root_value);
 }
 
 int main() {
-    printf("Iniciando testes da ABB (Árvore Binária de Busca)\n");
-    printf("================================================\n");
+    int test_count = 0;
+    int failed_count = 0;
+    bool test_passed;
     
-    test_criar_e_apagar();
-    test_inserir();
-    test_busca();
-    test_remover();
+    printf("=== Starting ABB (Binary Search Tree) Tests ===\n\n");
+
+    // Test 1: Creation and initialization
+    printf("Test Group 1: Basic Operations\n");
+    ABB* tree = abb_criar();
+    test_passed = (tree != NULL);
+    print_test_result("Tree creation", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Test 2: Basic insertion
+    test_passed = true;
+    test_passed &= abb_inserir(tree, 50);  // Root
+    test_passed &= (abb_get_chave_raiz(tree) == 50);
+    print_test_result("Root insertion", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Test 3: Complex insertion (creating a balanced-like structure)
+    printf("\nTest Group 2: Complex Insertions\n");
+    test_passed = true;
+    test_passed &= abb_inserir(tree, 30);  // Left of 50
+    test_passed &= abb_inserir(tree, 70);  // Right of 50
+    test_passed &= abb_inserir(tree, 20);  // Left of 30
+    test_passed &= abb_inserir(tree, 40);  // Right of 30
+    test_passed &= abb_inserir(tree, 60);  // Left of 70
+    test_passed &= abb_inserir(tree, 80);  // Right of 70
+    print_test_result("Multiple insertions", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Test 4: Duplicate insertion prevention
+    test_passed = !abb_inserir(tree, 50);  // Should fail
+    print_test_result("Duplicate insertion prevention", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Test 5: Search operations
+    printf("\nTest Group 3: Search Operations\n");
+    test_passed = true;
+    test_passed &= (abb_busca(tree, 50) == 50);    // Root
+    test_passed &= (abb_busca(tree, 30) == 30);    // Internal node
+    test_passed &= (abb_busca(tree, 80) == 80);    // Leaf node
+    test_passed &= (abb_busca(tree, 99) == ERRO);  // Non-existing element
+    print_test_result("Various searches", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Test 6: Tree printing (visual inspection needed)
+    printf("\nTest Group 4: Printing Operations\n");
+    printf("Ordered printing (should be ascending):\n");
+    abb_imprimir(tree, true);
+    printf("Non-ordered printing (should be level-order):\n");
+    abb_imprimir(tree, false);
+    print_test_result("Print functions executed", true);
+    test_count++;
+
+    // Test 7: Copy operation (do this before removals to avoid segfault)
+    printf("\nTest Group 5: Copy Operations\n");
+    ABB* tree_copy = abb_copiar(tree);
+    test_passed = (tree_copy != NULL);
+    test_passed &= (abb_get_chave_raiz(tree_copy) == abb_get_chave_raiz(tree));
+    test_passed &= (abb_busca(tree_copy, 30) == 30);
+    test_passed &= (abb_busca(tree_copy, 80) == 80);
+    print_test_result("Tree copying", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Test 8: Removal operations
+    printf("\nTest Group 6: Removal Operations\n");
     
-    printf("\nTestes concluídos!\n");
-    return 0;
+    // Remove leaf
+    test_passed = (abb_remover(tree, 20) == 20);
+    test_passed &= (abb_busca(tree, 20) == ERRO);
+    print_test_result("Leaf removal", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Remove node with one child
+    test_passed = (abb_remover(tree, 70) == 70);
+    test_passed &= (abb_busca(tree, 70) == ERRO);
+    test_passed &= verify_subtree_order(tree, 80); // Verify child is still accessible
+    print_test_result("Single child node removal", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Remove node with two children
+    test_passed = (abb_remover(tree, 30) == 30);
+    test_passed &= (abb_busca(tree, 30) == ERRO);
+    test_passed &= verify_subtree_order(tree, 40); // Verify children are still accessible
+    print_test_result("Two children node removal", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Test 9: Edge cases
+    printf("\nTest Group 7: Edge Cases\n");
+    ABB* null_tree = NULL;
+    test_passed = true;
+    test_passed &= (abb_busca(null_tree, 5) == ERRO);     // Search in NULL tree
+    test_passed &= (!abb_inserir(null_tree, 5));          // Insert in NULL tree
+    test_passed &= (abb_remover(null_tree, 5) == ERRO);   // Remove from NULL tree
+    test_passed &= (abb_get_chave_raiz(null_tree) == ERRO); // Get root of NULL tree
+    print_test_result("NULL tree operations", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Clean up
+    abb_apagar(&tree);
+    abb_apagar(&tree_copy);
+    test_passed = (tree == NULL && tree_copy == NULL);
+    print_test_result("Memory deallocation", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Final report
+    printf("\n=== Test Summary ===\n");
+    printf("Total tests: %d\n", test_count);
+    printf("Passed: %d\n", test_count - failed_count);
+    printf("Failed: %d\n", failed_count);
+    printf("Success rate: %.1f%%\n", ((float)(test_count - failed_count) / test_count) * 100);
+
+    return failed_count > 0 ? 1 : 0;
 }

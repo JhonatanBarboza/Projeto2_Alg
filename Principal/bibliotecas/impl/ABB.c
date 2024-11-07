@@ -17,12 +17,10 @@ struct abb_{
   int tamanho;
 };
 
-/* ÁRVORE BINÁRIA DE BUSCA */
-
 /*Funções auxiliares*/
 NO *buscaBinariaABB(NO *noRaiz, int chave);
 NO *inserirABB(NO *noRaiz, NO *noNovo);
-NO *removeRaizABB(NO *noRaiz);
+NO *removeRaizABB(NO *noRaiz, int elemento, bool *removido);
 void imprimirOrdenada(NO *noRaiz);
 void imprimirNaoOrdenada(NO *noRaiz);
 NO *no_criar(int chave, NO *noEsq, NO *noDir);
@@ -42,11 +40,20 @@ ABB *abb_criar(void){
 void abb_apagar(ABB **arvore){
   if(*arvore == NULL) return;
 
-  /*Apaga todos os nós da árvore recursivamente, começando pela raíz*/
   no_apagar_recursivo((*arvore)->raiz);
 
   free(*arvore);
   *arvore = NULL;
+}
+
+void no_apagar_recursivo(NO *no){
+  if(no == NULL) return;
+
+  no_apagar_recursivo(no->noEsq);
+  no_apagar_recursivo(no->noDir);
+  no_apagar(&no);
+
+  return;
 }
 
 bool abb_inserir(ABB *arvore, int elemento){
@@ -66,68 +73,14 @@ bool abb_inserir(ABB *arvore, int elemento){
   return true;
 }
 
-int abb_remover(ABB *arvore){
-  if(arvore == NULL) return ERRO;
-  if(arvore->raiz == NULL) return ERRO;
-  if(arvore->tamanho == 0) return ERRO;
+NO *no_criar(int chave, NO *noEsq, NO *noDir){
+  NO *noNovo = (NO *) malloc(sizeof(NO));
+  if(noNovo == NULL) return NULL;
 
-  NO *raizVelha = arvore->raiz;
-  int elemRemovido = raizVelha->chave;
-
-  /*removeRaizABB() explicado mais adiante*/
-  arvore->raiz = removeRaizABB(raizVelha);
-
-  arvore->tamanho--;
-  return elemRemovido;
-}
-
-void abb_imprimir(ABB *arvore, bool ordenada){
-  if(arvore == NULL) return;
-
-  if(ordenada){
-    imprimirOrdenada(arvore->raiz);
-  }
-  else{
-    imprimirNaoOrdenada(arvore->raiz);
-  }
-  printf("\n");
-
-  return;
-}
-
-int abb_busca(ABB *arvore, int chave){
-  if(arvore == NULL) return ERRO;
-  if(arvore->tamanho == 0) return ERRO;
-
-  NO *noChave = buscaBinariaABB(arvore->raiz, chave);
-  if(noChave == NULL) return ERRO;
-
-  return noChave->chave;
-}
-
-ABB *abb_copiar(ABB *arvore){
-  if(arvore == NULL) return NULL;
-
-  ABB *copiaArvore = abb_criar();
-  if(copiaArvore == NULL) return NULL;
-
-  copiaArvore->raiz = no_copiar_recursivo(arvore->raiz);
-  copiaArvore->tamanho = arvore->tamanho;
-
-  return copiaArvore;
-}
-
-NO *buscaBinariaABB(NO *noRaiz, int chave){
-  if((noRaiz == NULL) || (noRaiz->chave == chave)){
-    return noRaiz;
-  }
-
-  if(noRaiz->chave > chave){
-    return buscaBinariaABB(noRaiz->noEsq, chave);
-  }
-  else{
-    return buscaBinariaABB(noRaiz->noDir, chave);
-  }
+  noNovo->chave = chave;
+  noNovo->noEsq = noEsq;
+  noNovo->noDir = noDir;
+  return noNovo;
 }
 
 /*Percorre a árvore recursivamente e insere
@@ -147,51 +100,100 @@ NO *inserirABB(NO *noRaiz, NO *noNovo){
   return noRaiz;
 }
 
+int abb_remover(ABB *arvore, int elemento){
+  if(arvore == NULL) return ERRO;
+  if((arvore->raiz == NULL) || (arvore->tamanho == 0)) return ERRO;
+
+  bool removido = false;
+  arvore->raiz = removeRaizABB(arvore->raiz, elemento, &removido);
+
+  if(removido){
+    arvore->tamanho--;
+    return elemento;
+  }
+
+  return ERRO;
+}
+
 /*Remove um nó e o subtitui por um de seus filhos*/
-NO *removeRaizABB(NO *noRaiz){
-  if(noRaiz == NULL) return NULL;
+NO *removeRaizABB(NO *noRaiz, int elemento, bool *removido){
+  if(noRaiz == NULL){
+    *removido = false;
+    return NULL;
+  }
 
-  /*Nó a ser removido com somente um filho*/
-  NO *noAuxP, *noAuxQ;
-  if(noRaiz->noEsq == NULL){
-    noAuxQ = noRaiz->noDir;
+  /*Encontrando o nó a ser removido*/
+  if(elemento < noRaiz->chave){
+    noRaiz->noEsq = removeRaizABB(noRaiz->noEsq, elemento, removido);
+    return noRaiz;
+  }
+  else if(elemento > noRaiz->chave){
+    noRaiz->noDir = removeRaizABB(noRaiz->noDir, elemento, removido);
+    return noRaiz;
+  }
 
-    noRaiz->noDir = NULL;
+  /*Encontramos o nó*/
+  /*Nó folha*/
+  if((noRaiz->noEsq == NULL) && (noRaiz->noDir == NULL)){
+    *removido = true;
     no_apagar(&noRaiz);
+    return NULL;
+  }
 
-    return noAuxQ;
+  /*Nó com um filho só*/
+  if(noRaiz->noEsq == NULL){
+    *removido = true;
+    NO *noTemp = noRaiz->noDir;
+    no_apagar(&noRaiz);
+    return noTemp;
   }
   if(noRaiz->noDir == NULL){
-    noAuxQ = noRaiz->noEsq;
-
-    noRaiz->noEsq = NULL;
+    *removido = true;
+    NO *noTemp = noRaiz->noEsq;
     no_apagar(&noRaiz);
-
-    return noAuxQ;
-  }
-  
-  /*Nó com os dois filhos*/
-  /*Percorremos a árvore até achar o maior nó passível
-  de substituir o nó a ser removido (o maior nó passível
-  será aquele da direita com filho nulo)*/
-  noAuxP = noRaiz;
-  noAuxQ = noRaiz->noEsq;
-  while(noAuxQ->noDir != NULL){
-    noAuxP = noAuxQ;
-    noAuxQ = noAuxQ->noDir;
+    return noTemp;
   }
 
-  if(noAuxP != noRaiz){
-    noAuxP->noDir = noAuxQ->noEsq;
-    noAuxQ->noEsq = noRaiz->noEsq;
-  }
-  noAuxQ->noDir = noRaiz->noDir;
+  /*Nó com dois filhos*/
+  NO *sucessor = noRaiz->noDir;
+  NO *paiSucessor = noRaiz;
 
-  noRaiz->noDir = NULL;
-  noRaiz->noEsq = NULL;
+  while(sucessor->noEsq != NULL){
+    paiSucessor = sucessor;
+    sucessor = sucessor->noEsq;
+  }
+
+  if(paiSucessor !=  noRaiz){
+    paiSucessor->noEsq = sucessor->noDir;
+    sucessor->noDir = noRaiz->noDir;
+  }
+
+  sucessor->noEsq = noRaiz->noEsq;
   no_apagar(&noRaiz);
+  *removido = true;
+  return sucessor;
+}
 
-  return noAuxQ;
+void no_apagar(NO **no){
+  if(*no == NULL) return;
+
+  free(*no);
+  *no = NULL;
+  return;
+}
+
+void abb_imprimir(ABB *arvore, bool ordenada){
+  if(arvore == NULL) return;
+
+  if(ordenada){
+    imprimirOrdenada(arvore->raiz);
+  }
+  else{
+    imprimirNaoOrdenada(arvore->raiz);
+  }
+  printf("\n");
+
+  return;
 }
 
 void imprimirNaoOrdenada(NO *noRaiz){
@@ -214,32 +216,39 @@ void imprimirOrdenada(NO *noRaiz){
   return;
 }
 
-NO *no_criar(int chave, NO *noEsq, NO *noDir){
-  NO *noNovo = (NO *) malloc(sizeof(NO));
-  if(noNovo == NULL) return NULL;
+int abb_busca(ABB *arvore, int chave){
+  if(arvore == NULL) return ERRO;
+  if(arvore->tamanho == 0) return ERRO;
 
-  noNovo->chave = chave;
-  noNovo->noEsq = noEsq;
-  noNovo->noDir = noDir;
-  return noNovo;
+  NO *noChave = buscaBinariaABB(arvore->raiz, chave);
+  if(noChave == NULL) return ERRO;
+
+  return noChave->chave;
 }
 
-void no_apagar(NO **no){
-  if(*no == NULL) return;
+NO *buscaBinariaABB(NO *noRaiz, int chave){
+  if((noRaiz == NULL) || (noRaiz->chave == chave)){
+    return noRaiz;
+  }
 
-  free(*no);
-  *no = NULL;
-  return;
+  if(noRaiz->chave > chave){
+    return buscaBinariaABB(noRaiz->noEsq, chave);
+  }
+  else{
+    return buscaBinariaABB(noRaiz->noDir, chave);
+  }
 }
 
-void no_apagar_recursivo(NO *no){
-  if(no == NULL) return;
+ABB *abb_copiar(ABB *arvore){
+  if(arvore == NULL) return NULL;
 
-  no_apagar_recursivo(no->noEsq);
-  no_apagar_recursivo(no->noDir);
-  no_apagar(&no);
+  ABB *copiaArvore = abb_criar();
+  if(copiaArvore == NULL) return NULL;
 
-  return;
+  copiaArvore->raiz = no_copiar_recursivo(arvore->raiz);
+  copiaArvore->tamanho = arvore->tamanho;
+
+  return copiaArvore;
 }
 
 NO *no_copiar_recursivo(NO *no){
@@ -252,4 +261,11 @@ NO *no_copiar_recursivo(NO *no){
   noNovo->noDir = no_copiar_recursivo(no->noDir);
 
   return noNovo;
+}
+
+int abb_get_chave_raiz(ABB *arvore){
+  if(arvore == NULL) return ERRO;
+  if(arvore->tamanho == 0) return ERRO;
+
+  return arvore->raiz->chave;
 }

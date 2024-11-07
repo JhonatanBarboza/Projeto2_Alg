@@ -1,184 +1,128 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdbool.h>
-
+#include <assert.h>
 #include "../bibliotecas/lista.h"
 
-void test_criar(void) {
-    printf("\n=== Testing lista_criar ===\n");
-    LISTA *lista = lista_criar();
-    if (lista != NULL) {
-        printf("PASS: Lista created successfully\n");
-    } else {
-        printf("FAIL: Lista creation failed\n");
-    }
-    lista_apagar(&lista);
+// Utility function to print test results
+void print_test_result(const char* test_name, bool passed) {
+    printf("%s: %s\n", test_name, passed ? "PASSED ✓" : "FAILED ✗");
 }
 
-void test_inserir(void) {
-    printf("\n=== Testing lista_inserir ===\n");
-    LISTA *lista = lista_criar();
-    
-    // Test inserting in ascending order
-    printf("Testing ascending insertion:\n");
-    bool success = true;
-    success &= lista_inserir(lista, 10);
-    success &= lista_inserir(lista, 20);
-    success &= lista_inserir(lista, 30);
-    if (success) {
-        printf("PASS: Ascending insertions successful\n");
-    } else {
-        printf("FAIL: One or more insertions failed\n");
+// Utility function to verify list contents
+bool verify_list_contents(LISTA* lista, int expected[], int size) {
+    for(int i = 0; i < size; i++) {
+        if(lista_consultar(lista, i) != expected[i]) {
+            printf("List content mismatch at index %d: expected %d, got %d\n", 
+                   i, expected[i], lista_consultar(lista, i));
+            return false;
+        }
     }
-    lista_imprimir(lista);
-
-    // Test inserting in descending order
-    printf("\nTesting descending insertion:\n");
-    LISTA *lista2 = lista_criar();
-    success = true;
-    success &= lista_inserir(lista2, 30);
-    success &= lista_inserir(lista2, 20);
-    success &= lista_inserir(lista2, 10);
-    if (success) {
-        printf("PASS: Descending insertions successful\n");
-    } else {
-        printf("FAIL: One or more insertions failed\n");
-    }
-    lista_imprimir(lista2);
-
-    // Test inserting duplicates
-    printf("\nTesting duplicate insertion:\n");
-    success = lista_inserir(lista, 20);
-    if (success) {
-        printf("Duplicate insertion result:\n");
-        lista_imprimir(lista);
-    }
-
-    lista_apagar(&lista);
-    lista_apagar(&lista2);
+    return true;
 }
 
-void test_remover(void) {
-    printf("\n=== Testing lista_remover ===\n");
-    LISTA *lista = lista_criar();
+int main() {
+    int test_count = 0;
+    int failed_count = 0;
+    bool test_passed;
     
-    // Test removing from empty list
-    int removed = lista_remover(lista);
-    if (removed == ERRO) {
-        printf("PASS: Correctly handled removal from empty list\n");
-    } else {
-        printf("FAIL: Should return ERRO for empty list\n");
-    }
+    printf("=== Starting Lista ADT Tests ===\n\n");
 
-    // Test normal removal
-    lista_inserir(lista, 10);
-    lista_inserir(lista, 20);
-    lista_inserir(lista, 30);
-    
-    printf("List before removal:\n");
-    lista_imprimir(lista);
-    
-    removed = lista_remover(lista);
-    if (removed == 30) {
-        printf("PASS: Correctly removed element 30\n");
-    } else {
-        printf("FAIL: Removed wrong element or failed\n");
-    }
-    
-    printf("List after removal:\n");
-    lista_imprimir(lista);
-    
+    // Test 1: Creation and initialization
+    printf("Test Group 1: Basic Operations\n");
+    LISTA* lista = lista_criar();
+    test_passed = (lista != NULL);
+    print_test_result("Lista creation", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Test 2: Basic insertion
+    test_passed = lista_inserir(lista, 5);
+    print_test_result("First insertion", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Test 3: Ordered insertion
+    test_passed = true;
+    test_passed &= lista_inserir(lista, 3);  // Should go before 5
+    test_passed &= lista_inserir(lista, 7);  // Should go after 5
+    test_passed &= lista_inserir(lista, 1);  // Should go first
+    int expected1[] = {1, 3, 5, 7};
+    test_passed &= verify_list_contents(lista, expected1, 4);
+    print_test_result("Ordered insertion", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Test 4: Duplicate insertion
+    test_passed = !lista_inserir(lista, 5);  // Should fail
+    print_test_result("Duplicate insertion prevention", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Test 5: Binary search
+    printf("\nTest Group 2: Search Operations\n");
+    test_passed = true;
+    test_passed &= (lista_busca(lista, 5) == 5);    // Existing element
+    test_passed &= (lista_busca(lista, 6) == ERRO); // Non-existing element
+    print_test_result("Binary search", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Test 6: Removal
+    printf("\nTest Group 3: Removal Operations\n");
+    test_passed = true;
+    test_passed &= (lista_remover(lista, 3) == 3);  // Remove middle element
+    test_passed &= (lista_remover(lista, 1) == 1);  // Remove first element
+    test_passed &= (lista_remover(lista, 7) == 7);  // Remove last element
+    int expected2[] = {5};
+    test_passed &= verify_list_contents(lista, expected2, 1);
+    print_test_result("Element removal", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Test 7: Remove non-existent element
+    test_passed = (lista_remover(lista, 99) == ERRO);
+    print_test_result("Non-existent element removal", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Test 8: List copying
+    printf("\nTest Group 4: Copy Operations\n");
+    // Add some elements for copying
+    lista_inserir(lista, 2);
+    lista_inserir(lista, 8);
+    LISTA* copy = lista_copiar(lista);
+    test_passed = (copy != NULL);
+    int expected3[] = {2, 5, 8};
+    test_passed &= verify_list_contents(copy, expected3, 3);
+    print_test_result("List copying", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Test 9: Edge cases
+    printf("\nTest Group 5: Edge Cases\n");
+    test_passed = true;
+    LISTA* null_lista = NULL;
+    test_passed &= (lista_busca(null_lista, 5) == ERRO);  // Search in NULL list
+    test_passed &= (!lista_inserir(null_lista, 5));       // Insert in NULL list
+    test_passed &= (lista_remover(null_lista, 5) == ERRO); // Remove from NULL list
+    print_test_result("NULL list operations", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
+
+    // Clean up
     lista_apagar(&lista);
-}
-
-void test_busca(void) {
-    printf("\n=== Testing lista_busca ===\n");
-    LISTA *lista = lista_criar();
-    
-    // Insert some elements
-    lista_inserir(lista, 10);
-    lista_inserir(lista, 20);
-    lista_inserir(lista, 30);
-    lista_inserir(lista, 40);
-    lista_inserir(lista, 50);
-    
-    printf("Current list:\n");
-    lista_imprimir(lista);
-
-    // Test finding existing elements
-    int pos = lista_busca(lista, 30);
-    if (pos != ERRO) {
-        printf("PASS: Found 30 at position %d\n", pos);
-    } else {
-        printf("FAIL: Couldn't find existing element 30\n");
-    }
-
-    // Test finding non-existing elements
-    pos = lista_busca(lista, 35);
-    if (pos == ERRO) {
-        printf("PASS: Correctly returned ERRO for non-existing element\n");
-    } else {
-        printf("FAIL: Found non-existing element at position %d\n", pos);
-    }
-
-    lista_apagar(&lista);
-}
-
-void test_copiar(void) {
-    printf("\n=== Testing lista_copiar ===\n");
-    LISTA *original = lista_criar();
-    
-    // Insert some elements
-    lista_inserir(original, 10);
-    lista_inserir(original, 20);
-    lista_inserir(original, 30);
-    
-    printf("Original list:\n");
-    lista_imprimir(original);
-    
-    LISTA *copy = lista_copiar(original);
-    if (copy != NULL) {
-        printf("Copy result:\n");
-        lista_imprimir(copy);
-    } else {
-        printf("FAIL: Copy operation failed\n");
-    }
-    
-    lista_apagar(&original);
     lista_apagar(&copy);
-}
+    test_passed = (lista == NULL && copy == NULL);
+    print_test_result("Memory deallocation", test_passed);
+    if(!test_passed) failed_count++;
+    test_count++;
 
-void test_null_handling(void) {
-    printf("\n=== Testing NULL handling ===\n");
-    
-    // Test operations with NULL
-    if (!lista_inserir(NULL, 10)) {
-        printf("PASS: Correctly handled NULL lista in inserir\n");
-    }
-    
-    if (lista_remover(NULL) == ERRO) {
-        printf("PASS: Correctly handled NULL lista in remover\n");
-    }
-    
-    if (lista_busca(NULL, 10) == ERRO) {
-        printf("PASS: Correctly handled NULL lista in busca\n");
-    }
-    
-    if (lista_copiar(NULL) == NULL) {
-        printf("PASS: Correctly handled NULL lista in copiar\n");
-    }
-}
+    // Final report
+    printf("\n=== Test Summary ===\n");
+    printf("Total tests: %d\n", test_count);
+    printf("Passed: %d\n", test_count - failed_count);
+    printf("Failed: %d\n", failed_count);
+    printf("Success rate: %.1f%%\n", ((float)(test_count - failed_count) / test_count) * 100);
 
-int main(void) {
-    printf("Starting Lista ADT tests...\n");
-    
-    test_criar();
-    test_inserir();
-    test_remover();
-    test_busca();
-    test_copiar();
-    test_null_handling();
-    
-    printf("\nAll tests completed.\n");
-    return 0;
+    return failed_count > 0 ? 1 : 0;
 }

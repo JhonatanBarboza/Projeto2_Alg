@@ -14,7 +14,10 @@ struct conjunto_{
 };
 
 CONJUNTO *conjunto_criar(int TAD){
-  if((TAD != TAD_LISTA) && (TAD != TAD_ARVORE)) return NULL; //TAD inválido
+  if((TAD != TAD_LISTA) && (TAD != TAD_ARVORE)){
+    printf("TAD inválido\n");
+    return NULL;  
+  }
 
   CONJUNTO *conjunto = (CONJUNTO *) malloc(sizeof(CONJUNTO));
   if(conjunto == NULL) return NULL;
@@ -67,10 +70,10 @@ int conjunto_remover(CONJUNTO *conj, int elemento){
 
   int elementoRemovido;
   if(conj->TAD == TAD_LISTA){
-    elementoRemovido =  lista_remover(conj->conjuntoLista, elemento);// ********************************
+    elementoRemovido =  lista_remover(conj->conjuntoLista, elemento);
   }
   else{
-    elementoRemovido = abb_remover(conj->conjuntoABB);
+    elementoRemovido = abb_remover(conj->conjuntoABB, elemento);
   }
 
   if(elementoRemovido == ERRO) return ERRO;
@@ -107,57 +110,46 @@ bool conjunto_pertence(CONJUNTO *conj, int elemento){
 }
 
 CONJUNTO *conjunto_uniao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal){
-  if((conjAOriginal == NULL) || (conjBOriginal == NULL)){
-    printf ("Conjunto união vazio!\n");    // ***************************************************
+  if((conjAOriginal == NULL) || (conjBOriginal == NULL)) return NULL;
+
+  if((conjAOriginal->tamanho == 0) && (conjBOriginal->tamanho == 0)){
+    printf ("Conjunto união vazio!\n");
     return NULL;
   }
 
-  CONJUNTO *conjA = conjunto_copiar(conjAOriginal);
-  CONJUNTO *conjB = conjunto_copiar(conjBOriginal);
-  if((conjA == NULL) || (conjB == NULL)){
-    conjunto_apagar(&conjA);
-    conjunto_apagar(&conjB);
-    return NULL;
-  }
-
-  CONJUNTO *conjUniao = conjunto_criar(conjAOriginal->TAD);
+  /*Criando conjUniao a partir do conjunto A*/
+  CONJUNTO *conjUniao = conjunto_copiar(conjAOriginal);
   if(conjUniao == NULL){
     conjunto_apagar(&conjUniao);
     return NULL;
   }
 
   if(conjUniao->TAD == TAD_LISTA){
-    /*Inserindo todos os elementos de A em conjUniao*/
-    conjUniao = conjunto_copiar(conjA);
-
     /*Inserindo os elementos de B em conjUniao*/
-    for(int i = 0; i < conjB->tamanho; i++){
-      lista_inserir(conjUniao->conjuntoLista, lista_consultar(conjB->conjuntoLista, i));
-
-      conjUniao->tamanho++;
+    for(int i = 0; i < conjBOriginal->tamanho; i++){
+      int elemento = lista_consultar(conjBOriginal->conjuntoLista, i); /*Obtendo o elemento da lista na posição i*/
+      conjunto_inserir(conjUniao, elemento);
     }
-
     /*Observação: a lista não insere números que já aparecem nela*/
   }
 
   if(conjUniao->TAD == TAD_ARVORE){
-    /*Mesma lógica e observação que na lista*/
-    for(int i = 0; i < conjA->tamanho; i++){
-      int elemento = abb_remover(conjA->conjuntoABB);
-      abb_inserir(conjUniao->conjuntoABB, elemento);
-
-      conjUniao->tamanho++;
+    /*Para inserir o elemento em conjUniao, vamos ter que removê-lo da árvore.
+    Devido a isso, vamos criar uma cópia do conjunto B e remover os elementos
+    desse conjunto, mantendo o original intacto.*/
+    CONJUNTO *conjBCopia = conjunto_copiar(conjBOriginal);
+    if(conjBCopia == NULL){
+      conjunto_apagar(&conjBCopia);
+      return NULL;
     }
-    
-    for(int i = 0; i < conjB->tamanho; i++){
-      int elemento = abb_remover(conjB->conjuntoABB);
 
-      if(abb_busca(conjUniao->conjuntoABB, elemento) == ERRO){
-        abb_inserir(conjUniao->conjuntoABB, elemento);
-        
-        conjUniao->tamanho++;
-      }
+    for(int i = 0; i < conjBOriginal->tamanho; i++){
+      /*Removemos a raíz da árvore por padrão para facilitar as operações.*/
+      int elemento = abb_remover(conjBCopia->conjuntoABB, abb_get_chave_raiz(conjBCopia->conjuntoABB));
+      conjunto_inserir(conjUniao, elemento);
     }
+    /*Mesma observação que na lista*/
+    conjunto_apagar(&conjBCopia);
   }
 
   return conjUniao;
@@ -165,12 +157,6 @@ CONJUNTO *conjunto_uniao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal){
 
 CONJUNTO *conjunto_interseccao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal){
   if((conjAOriginal == NULL) || (conjBOriginal == NULL)) return NULL;
-
-  CONJUNTO *conjA = conjunto_copiar(conjAOriginal);
-  if(conjA == NULL){
-    conjunto_apagar(&conjA);
-    return NULL;
-  }
 
   CONJUNTO *conjIntersec = conjunto_criar(conjAOriginal->TAD);
   if(conjIntersec == NULL){
@@ -180,34 +166,36 @@ CONJUNTO *conjunto_interseccao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal)
 
   if(conjIntersec->TAD == TAD_LISTA){
     /*Somente inserindo os elementos de A se eles aparecerem em B*/
-    for(int i = 0; i < conjA->tamanho; i++){
-      int elemento = lista_consultar(conjA->conjuntoLista, i);
+    for(int i = 0; i < conjAOriginal->tamanho; i++){
+      int elemento = lista_consultar(conjAOriginal->conjuntoLista, i);
 
       if(conjunto_pertence(conjBOriginal, elemento)){
-        lista_inserir(conjIntersec->conjuntoLista, elemento);
-
-        conjIntersec->tamanho++;
+        conjunto_inserir(conjIntersec, elemento);
       }
     }
   }
 
   if(conjIntersec->TAD == TAD_ARVORE){
-    /*Mesma lógica*/
-    for(int i = 0; i < conjA->tamanho; i++){
-      int elemento = abb_remover(conjA->conjuntoABB);
+    /*Mesma lógica que na união*/
+    CONJUNTO *conjACopia = conjunto_copiar(conjAOriginal);
+    if(conjACopia == NULL){
+      conjunto_apagar(&conjACopia);
+      return NULL;
+    }
+
+    for(int i = 0; i < conjAOriginal->tamanho; i++){
+      int elemento = abb_remover(conjACopia->conjuntoABB, abb_get_chave_raiz(conjACopia->conjuntoABB));
 
       if(conjunto_pertence(conjBOriginal, elemento)){
-        abb_inserir(conjIntersec->conjuntoABB, elemento);
-
-        conjIntersec->tamanho++;
+        conjunto_inserir(conjIntersec, elemento);
       }
     }
+
+    conjunto_apagar(&conjACopia);
   }
 
-  conjunto_apagar(&conjA);
-  /*verifica se o conjunto é vazio*/
   if (conjIntersec->tamanho == 0){
-    printf("Conjunto intersecção vazio!\n"); // ********************************
+    printf("Conjunto intersecção vazio!\n");
   }
   return conjIntersec;
 }

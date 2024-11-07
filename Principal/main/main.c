@@ -24,8 +24,8 @@ int main(void){
   scanf("%d", &tamA);
   scanf("%d", &tamB);
 
-  if (tamA == 0 && tamB == 0){
-    printf("Conjuntos vazios!\n");  // ********************************
+  if(tamA == 0 && tamB == 0){
+    printf("Conjuntos vazios!\n");
     return EXIT_SUCCESS;
   }
 
