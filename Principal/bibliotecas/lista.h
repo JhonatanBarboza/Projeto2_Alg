@@ -1,7 +1,7 @@
 #ifndef LISTA_H
   #define LISTA_H
 
-  #define TAM_MAX 100000
+  #define TAM_MAX 199999
   #define ERRO 1000010
 
   typedef struct lista_ LISTA;

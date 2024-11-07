@@ -51,7 +51,7 @@ int main(void){
         printf("Pertence.\n");
       }
       else{
-        printf("Nao pertence.\n");
+        printf("Não pertence.\n");
       }
       
       break;

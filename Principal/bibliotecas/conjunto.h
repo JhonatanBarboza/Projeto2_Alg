@@ -7,7 +7,7 @@
   typedef struct conjunto_ CONJUNTO;
 
   CONJUNTO *conjunto_criar(int TAD);
-  bool conjunto_apagar(CONJUNTO **conj);
+  void conjunto_apagar(CONJUNTO **conj);
   bool conjunto_inserir(CONJUNTO *conj, int elemento);
   int conjunto_remover(CONJUNTO *conj, int elemento);
   void conjunto_imprimir(CONJUNTO *conj);

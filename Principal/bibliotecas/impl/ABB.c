@@ -115,7 +115,9 @@ int abb_remover(ABB *arvore, int elemento){
   return ERRO;
 }
 
-/*Remove um nó e o subtitui por um de seus filhos*/
+/*Encontra o sucessor do nó a ser removido (o menor valor na sub-árvore
+da direita) e o coloca no lugar do nó a ser removido, conectando o resto
+da árvore a ele*/
 NO *removeRaizABB(NO *noRaiz, int elemento, bool *removido){
   if(noRaiz == NULL){
     *removido = false;
@@ -133,14 +135,14 @@ NO *removeRaizABB(NO *noRaiz, int elemento, bool *removido){
   }
 
   /*Encontramos o nó*/
-  /*Nó folha*/
+  /*Se for nó folha*/
   if((noRaiz->noEsq == NULL) && (noRaiz->noDir == NULL)){
     *removido = true;
     no_apagar(&noRaiz);
     return NULL;
   }
 
-  /*Nó com um filho só*/
+  /*Se for nó com um filho só*/
   if(noRaiz->noEsq == NULL){
     *removido = true;
     NO *noTemp = noRaiz->noDir;
@@ -154,7 +156,7 @@ NO *removeRaizABB(NO *noRaiz, int elemento, bool *removido){
     return noTemp;
   }
 
-  /*Nó com dois filhos*/
+  /*Se for nó com dois filhos*/
   NO *sucessor = noRaiz->noDir;
   NO *paiSucessor = noRaiz;
 
