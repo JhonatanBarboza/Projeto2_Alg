@@ -227,7 +227,7 @@ CONJUNTO *conjunto_copiar(CONJUNTO *conj){
 
   if((copiaConj->conjuntoLista == NULL) && (copiaConj->conjuntoABB == NULL)){
     /*Houve um erro ao criar a lista ou a árvore*/
-    conjunto_apagar(copiaConj);
+    conjunto_apagar(&copiaConj);
     return NULL;
   }
   
