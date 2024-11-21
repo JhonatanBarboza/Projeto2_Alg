@@ -104,6 +104,7 @@ LISTA *lista_copiar(LISTA *lista){
   return listaCopia;
 }
 
+/*Consulta pelo índice, não pela chave*/
 int lista_consultar(LISTA *lista, int indice){
   if(lista == NULL) return ERRO;
   if((indice >= lista->tamanho) || (indice < 0)) return ERRO;

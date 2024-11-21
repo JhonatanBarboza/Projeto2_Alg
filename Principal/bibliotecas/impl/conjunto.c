@@ -8,11 +8,14 @@
 
 struct conjunto_{
   int TAD;
-  LISTA *conjuntoLista; /*Um desses ponteiros não será utilizado*/
-  ABB *conjuntoABB;
   int tamanho;
+  /*Somente um dos próximos ponteiros será utilizado*/
+  LISTA *conjuntoLista;
+  ABB *conjuntoABB;
 };
 
+/*Chama a função específica de cada um dos TADs para criar
+a ED escolhida e a armazena no ponteiro correspondente*/
 CONJUNTO *conjunto_criar(int TAD){
   if((TAD != TAD_LISTA) && (TAD != TAD_ARVORE)){
     printf("TAD inválido!\n");
@@ -36,6 +39,7 @@ CONJUNTO *conjunto_criar(int TAD){
   return conjunto;
 }
 
+/*Análoga à criar*/
 void conjunto_apagar(CONJUNTO **conj){
   if(*conj == NULL) return;
 
@@ -51,6 +55,7 @@ void conjunto_apagar(CONJUNTO **conj){
   return;
 }
 
+/*Análoga à criar*/
 bool conjunto_inserir(CONJUNTO *conj, int elemento){
   if(conj == NULL) return false;
 
@@ -65,6 +70,7 @@ bool conjunto_inserir(CONJUNTO *conj, int elemento){
   return true;
 }
 
+/*Análoga à criar*/
 int conjunto_remover(CONJUNTO *conj, int elemento){ 
   if(conj == NULL) return ERRO;
 
@@ -82,6 +88,7 @@ int conjunto_remover(CONJUNTO *conj, int elemento){
   return elementoRemovido;
 }
 
+/*Análoga à criar*/
 void conjunto_imprimir(CONJUNTO *conj){
   if(conj == NULL) return;
 
@@ -95,6 +102,7 @@ void conjunto_imprimir(CONJUNTO *conj){
   return;
 }
 
+/*Utiliza a função de busca do TAD escolhido para tentar encontrar o elemento*/
 bool conjunto_pertence(CONJUNTO *conj, int elemento){
   if(conj == NULL) return false;
 
@@ -110,13 +118,14 @@ bool conjunto_pertence(CONJUNTO *conj, int elemento){
 
 CONJUNTO *conjunto_uniao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal){
   if((conjAOriginal == NULL) || (conjBOriginal == NULL)) return NULL;
-
   if((conjAOriginal->tamanho == 0) && (conjBOriginal->tamanho == 0)){
     printf ("Conjunto união vazio!\n");
     return NULL;
   }
 
-  /*Criando conjUniao a partir do conjunto A*/
+  /*Como o conjunto união contém os elementos dos dois conjuntos, podemos
+  inicializar ele com todos os elementos de um dos conjutos. Fazemos isso
+  utilizando a função conjunto_copia() com o conjunto A.*/
   CONJUNTO *conjUniao = conjunto_copiar(conjAOriginal);
   if(conjUniao == NULL){
     conjunto_apagar(&conjUniao);
@@ -125,18 +134,19 @@ CONJUNTO *conjunto_uniao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal){
   /*Assim conjUniao já tem todos os elementos de A*/
 
   if(conjUniao->TAD == TAD_LISTA){
-    /*Inserindo os elementos de B em conjUniao*/
+    /*Inserindo os elementos de B em conjUniao utilizando a função inserir da lista*/
     for(int i = 0; i < conjBOriginal->tamanho; i++){
       int elemento = lista_consultar(conjBOriginal->conjuntoLista, i); /*Obtendo o elemento da lista na posição i*/
       conjunto_inserir(conjUniao, elemento);
     }
-    /*Observação: a lista não insere números que já aparecem nela*/
+    /*Observação: a lista não insere números que já aparecem nela!*/
   }
 
   if(conjUniao->TAD == TAD_ARVORE){
-    /*Para inserir os elementos de B em conjUniao, vamos ter que removê-los da árvore.
-    Devido a isso, vamos criar uma cópia do conjunto B e remover os elementos
-    desse conjunto, mantendo o original intacto.*/
+    /*Utilizando o TAD árvore, para inserir os elementos de B em conjUniao vamos ter
+    que removê-los da árvore (devido à sua implementação). Devido a isso, vamos
+    criar uma cópia do conjunto B e remover os elementos esse conjunto, mantendo
+    o original intacto.*/
     CONJUNTO *conjBCopia = conjunto_copiar(conjBOriginal);
     if(conjBCopia == NULL){
       conjunto_apagar(&conjBCopia);
@@ -144,7 +154,7 @@ CONJUNTO *conjunto_uniao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal){
     }
 
     for(int i = 0; i < conjBOriginal->tamanho; i++){
-      /*Removemos a raíz da árvore por padrão para facilitar as operações.*/
+      /*Removemos a raíz da árvore por padrão para facilitar a operação de remoção.*/
       int elemento = abb_remover(conjBCopia->conjuntoABB, abb_get_chave_raiz(conjBCopia->conjuntoABB));
       conjunto_inserir(conjUniao, elemento);
     }
@@ -157,7 +167,6 @@ CONJUNTO *conjunto_uniao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal){
 
 CONJUNTO *conjunto_interseccao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal){
   if((conjAOriginal == NULL) || (conjBOriginal == NULL)) return NULL;
-
   if((conjAOriginal->tamanho == 0) && (conjBOriginal->tamanho == 0)){
     printf ("Conjunto intersecção vazio!\n");
     return NULL;
@@ -170,24 +179,28 @@ CONJUNTO *conjunto_interseccao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal)
   }
 
   if(conjIntersec->TAD == TAD_LISTA){
-    /*Somente inserindo os elementos de A se eles aparecerem em B*/
+    /*Somente inserimos um elemento de A em conjIntersec se ele também aparecer em B*/
     for(int i = 0; i < conjAOriginal->tamanho; i++){
+      //Vamos percorrer a lista A elemento a elemento
       int elemento = lista_consultar(conjAOriginal->conjuntoLista, i);
 
+      //Se o elemento atual pertencer à B, inserimos em Intersec
       if(conjunto_pertence(conjBOriginal, elemento)){
         conjunto_inserir(conjIntersec, elemento);
       }
+      //Senão, não inserimos
     }
   }
 
   if(conjIntersec->TAD == TAD_ARVORE){
-    /*Mesma lógica que na união*/
+    /*Mesma lógica de copiar a árvore na união, pelo mesmo motivo*/
     CONJUNTO *conjACopia = conjunto_copiar(conjAOriginal);
     if(conjACopia == NULL){
       conjunto_apagar(&conjACopia);
       return NULL;
     }
 
+    /*Mesma lógica usada com o TAD lista*/
     for(int i = 0; i < conjAOriginal->tamanho; i++){
       int elemento = abb_remover(conjACopia->conjuntoABB, abb_get_chave_raiz(conjACopia->conjuntoABB));
 
@@ -208,6 +221,7 @@ CONJUNTO *conjunto_interseccao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal)
   return conjIntersec;
 }
 
+/*Análoga à criar*/
 CONJUNTO *conjunto_copiar(CONJUNTO *conj){
   if(conj == NULL) return NULL;
 
