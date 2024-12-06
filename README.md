@@ -8,14 +8,14 @@ O objetivo do projeto foi implementar três TADs, visando desenvolver tanto as o
 A escolha de implementar o TAD com uma lista utilizando busca binária deve-se ao fato de que a operação de busca pode ser realizada em $$O(\log n)$$. Apesar de as operações de inserção e remoção apresentarem complexidade $$O(n)$$, no geral, o desempenho é satisfatório em cenários onde a busca é predominante. Já a árvore binária de busca AVL foi escolhida por sua eficiência consistente, com complexidade $$O(\log n)$$ para as operações de busca, inserção e remoção, garantindo bom desempenho mesmo no pior caso. 
 
 ### Principais operações:
-#### função main:
-#### TAD conjunto:
-#### TAD lista:
-#### TAD arvora binaria de buca AVL:
+#### Main:
+#### TAD Conjunto:
+#### TAD Lista:
+#### TAD Arvora Binaria de Busca AVL:
 
 ### Complexidade das operação:
-#### função main:
-#### TAD conjunto:
-#### TAD lista:
-#### TAD arvora binaria de buca AVL:
+#### Main:
+#### TAD Conjunto:
+#### TAD Lista:
+#### TAD Arvora Binaria de Buca AVL:
 
