@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include "../bibliotecas/conjunto.h"
 
+/*Gerado pelo CLAUDE*/
+
 void testar_conjunto_lista();
 void testar_conjunto_arvore();
 void imprimir_pertence(CONJUNTO *conj, int elemento);
