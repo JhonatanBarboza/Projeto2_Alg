@@ -2,14 +2,16 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "AVL.h"
+#include "../AVL.h"
 
-typedef struct no_{
+typedef struct no_ NO;
+
+struct no_{
   int chave;
   NO *noEsq;
   NO *noDir;
   int FB; //Fator de Balanceamento
-} NO;
+};
 
 /*Funções auxiliares do nó*/
 NO *no_criar(int chave, NO *noEsq, NO *noDir);
@@ -27,7 +29,7 @@ struct avl_{
 };
 
 /*Funções auxiliares da árvore*/
-NO *avl_inserir_no(NO *noRaiz, NO *noNovo);
+NO *avl_inserir_no(NO *noRaiz, NO *noNovo, bool *jaInserido);
 bool avl_remover_no(NO **pontNoRaiz, int chave);
 /*Funções auxiliares da árvore*/
 
@@ -88,14 +90,18 @@ bool avl_inserir(AVL *avl, int chave){
 
   /*Inserindo o nó na árvore*/
   /*Atribuir o resultado de avl_inserir_no diretamente ao nó raiz poderia quebrar a árvore caso a função retorne NULL. Por causa disso, vamos utilizar o noTemp*/
-  NO *noTemp = avl_inserir_no(avl->noRaiz, noNovo);
-  if(noTemp == NULL) return false;
+  bool jaInserido = false; // Flag para retornamos falso caso o elemento já tenha sido inserido
+
+  NO *noTemp = avl_inserir_no(avl->noRaiz, noNovo, &jaInserido);
+  if((noTemp == NULL) || (jaInserido == true)) return false;
   avl->noRaiz = noTemp;
+
+  avl->tamanho++;
 
   return true;
 }
 
-NO *avl_inserir_no(NO *noRaiz, NO *noNovo){
+NO *avl_inserir_no(NO *noRaiz, NO *noNovo, bool *jaInserido){
   /*
   noRaiz == NULL -> a árvore está vazia, devemos inserir
   noNovo == NULL -> o nó foi criado incorretamente, não devemos inserir
@@ -103,9 +109,14 @@ NO *avl_inserir_no(NO *noRaiz, NO *noNovo){
   if(noNovo == NULL) return NULL;
 
   /*Inserindo o nó em pré-ordem, que nem uma ABB*/
-  if(noRaiz == NULL) noRaiz = noNovo;
-  else if(noNovo->chave < noRaiz->chave) noRaiz->noEsq = avl_inserir_no(noRaiz->noEsq, noNovo);
-  else noRaiz->noDir = avl_inserir_no(noRaiz->noDir, noNovo);
+  if(noRaiz == NULL) return noNovo;
+  else if(noNovo->chave == noRaiz->chave){
+    /*Prevenindo inserção de elementos duplicados*/
+    *jaInserido = true;
+    return noRaiz;
+  }
+  else if(noNovo->chave < noRaiz->chave) noRaiz->noEsq = avl_inserir_no(noRaiz->noEsq, noNovo, jaInserido);
+  else noRaiz->noDir = avl_inserir_no(noRaiz->noDir, noNovo, jaInserido);
 
   /*Definindo os fatores de balanceamento*/
   noRaiz->FB = no_get_altura(noRaiz->noEsq) - no_get_altura(noRaiz->noDir);
@@ -234,10 +245,10 @@ bool avl_remover_no(NO **pontNoRaiz, int chave){
     }
   }
   else if(chave < (*pontNoRaiz)->chave){
-    avl_remover_no((*pontNoRaiz)->noEsq, chave);
+    avl_remover_no(&(*pontNoRaiz)->noEsq, chave);
   }
   else if(chave > (*pontNoRaiz)->chave){
-    avl_remover_no((*pontNoRaiz)->noDir, chave);
+    avl_remover_no(&(*pontNoRaiz)->noDir, chave);
   }
 
   if(*pontNoRaiz == NULL) return false;

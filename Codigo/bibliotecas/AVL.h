@@ -11,8 +11,9 @@
   bool avl_remover(AVL *avl, int chave);
   int avl_get_altura(AVL *avl);
   /*A fazer*/
+  /*
   void avl_imprimir(AVL *avl);
   int avl_busca(AVL *avl, int chave);
-  AVL *avl_copiar(AVL *avl);
+  AVL *avl_copiar(AVL *avl);*/
 
 #endif
