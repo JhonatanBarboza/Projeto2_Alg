@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 #include "../lista.h"
-#include "../ABB.h"
+#include "../AVL.h"
 #include "../conjunto.h"
 
 struct conjunto_{
@@ -11,7 +11,7 @@ struct conjunto_{
   int tamanho;
   /*Somente um dos próximos ponteiros será utilizado*/
   LISTA *conjuntoLista;
-  ABB *conjuntoABB;
+  AVL *conjuntoAVL;
 };
 
 /*Chama a função específica de cada um dos TADs para criar
@@ -29,11 +29,11 @@ CONJUNTO *conjunto_criar(int TAD){
   conjunto->tamanho = 0;
   if(TAD == TAD_LISTA){
     conjunto->conjuntoLista = lista_criar();
-    conjunto->conjuntoABB = NULL;
+    conjunto->conjuntoAVL = NULL;
   }
   else if(TAD == TAD_ARVORE){
     conjunto->conjuntoLista = NULL;
-    conjunto->conjuntoABB = abb_criar();
+    conjunto->conjuntoAVL = avl_criar();
   }
 
   return conjunto;
@@ -47,7 +47,7 @@ void conjunto_apagar(CONJUNTO **conj){
     lista_apagar(&((*conj)->conjuntoLista));
   }
   else{
-    abb_apagar(&((*conj)->conjuntoABB));
+    avl_apagar(&((*conj)->conjuntoAVL));
   }
 
   free(*conj);
@@ -63,7 +63,7 @@ bool conjunto_inserir(CONJUNTO *conj, int elemento){
     lista_inserir(conj->conjuntoLista, elemento);
   }
   else{
-    abb_inserir(conj->conjuntoABB, elemento);
+    avl_inserir(conj->conjuntoAVL, elemento);
   }
 
   conj->tamanho++;
@@ -79,7 +79,7 @@ int conjunto_remover(CONJUNTO *conj, int elemento){
     elementoRemovido =  lista_remover(conj->conjuntoLista, elemento);
   }
   else{
-    elementoRemovido = abb_remover(conj->conjuntoABB, elemento);
+    elementoRemovido = avl_remover(conj->conjuntoAVL, elemento);
   }
 
   if(elementoRemovido == ERRO) return ERRO;
@@ -96,7 +96,7 @@ void conjunto_imprimir(CONJUNTO *conj){
     lista_imprimir(conj->conjuntoLista);
   }
   else{
-    abb_imprimir(conj->conjuntoABB, true); //true: referente a imprimir a árvore ordenadamente ou não
+    avl_imprimir(conj->conjuntoAVL);
   }
 
   return;
@@ -110,7 +110,7 @@ bool conjunto_pertence(CONJUNTO *conj, int elemento){
     if(elemento == lista_busca(conj->conjuntoLista, elemento)) return true;
   }
   else{
-    if(elemento == abb_busca(conj->conjuntoABB, elemento)) return true;
+    if(elemento == avl_busca(conj->conjuntoAVL, elemento)) return true;
   }
 
   return false;
@@ -152,11 +152,13 @@ CONJUNTO *conjunto_uniao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal){
       conjunto_apagar(&conjBCopia);
       return NULL;
     }
-
-    for(int i = 0; i < conjBOriginal->tamanho; i++){
+    
+    while(avl_get_tamanho(conjBCopia->conjuntoAVL) > 0){
       /*Removemos a raíz da árvore por padrão para facilitar a operação de remoção.*/
-      int elemento = abb_remover(conjBCopia->conjuntoABB, abb_get_chave_raiz(conjBCopia->conjuntoABB));
-      conjunto_inserir(conjUniao, elemento);
+      int chaveRaiz = avl_get_chave_raiz(conjBCopia->conjuntoAVL);
+      if(chaveRaiz == ERRO) break;
+      int elemento = avl_remover(conjBCopia->conjuntoAVL, chaveRaiz);
+      if(elemento != ERRO) conjunto_inserir(conjUniao, elemento);
     }
     /*Mesma observação que na lista*/
     conjunto_apagar(&conjBCopia);
@@ -185,7 +187,7 @@ CONJUNTO *conjunto_interseccao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal)
       int elemento = lista_consultar(conjAOriginal->conjuntoLista, i);
 
       //Se o elemento atual pertencer à B, inserimos em Intersec
-      if(conjunto_pertence(conjBOriginal, elemento)){
+      if((elemento != ERRO) && (conjunto_pertence(conjBOriginal, elemento))){
         conjunto_inserir(conjIntersec, elemento);
       }
       //Senão, não inserimos
@@ -201,9 +203,11 @@ CONJUNTO *conjunto_interseccao(CONJUNTO *conjAOriginal, CONJUNTO *conjBOriginal)
     }
 
     /*Mesma lógica usada com o TAD lista*/
-    for(int i = 0; i < conjAOriginal->tamanho; i++){
-      int elemento = abb_remover(conjACopia->conjuntoABB, abb_get_chave_raiz(conjACopia->conjuntoABB));
-
+    while(avl_get_tamanho(conjACopia->conjuntoAVL) > 0){
+      int chaveRaiz = avl_get_chave_raiz(conjACopia->conjuntoAVL);
+      if (chaveRaiz == ERRO) break;
+      int elemento = avl_remover(conjACopia->conjuntoAVL, chaveRaiz);
+      if (elemento == ERRO) break;
       if(conjunto_pertence(conjBOriginal, elemento)){
         conjunto_inserir(conjIntersec, elemento);
       }
@@ -236,10 +240,10 @@ CONJUNTO *conjunto_copiar(CONJUNTO *conj){
     copiaConj->conjuntoLista = lista_copiar(conj->conjuntoLista);
   }
   else{
-    copiaConj->conjuntoABB = abb_copiar(conj->conjuntoABB);
+    copiaConj->conjuntoAVL = avl_copiar(conj->conjuntoAVL);
   }
 
-  if((copiaConj->conjuntoLista == NULL) && (copiaConj->conjuntoABB == NULL)){
+  if((copiaConj->conjuntoLista == NULL) && (copiaConj->conjuntoAVL == NULL)){
     /*Houve um erro ao criar a lista ou a árvore*/
     conjunto_apagar(&copiaConj);
     return NULL;

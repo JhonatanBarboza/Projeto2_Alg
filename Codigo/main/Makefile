@@ -1,13 +1,15 @@
 all: compile
-	gcc avl.o testeAVL.o -o testeAVL -std=c99 -Wall
+	gcc lista.o avl.o conjunto.o testeConj.o -o testeConj -std=c99 -Wall
 	rm *.o
 
 compile:
+	gcc -c ../bibliotecas/impl/lista.c -o lista.o
 	gcc -c ../bibliotecas/impl/AVL.c -o avl.o
-	gcc -c testeAVL.c -o testeAVL.o
+	gcc -c ../bibliotecas/impl/conjunto.c -o conjunto.o
+	gcc -c testeConj.c -o testeConj.o
 
 run:
-	./testeAVL
+	./testeConj
 
 clean:
-	rm -f testeAVL
+	rm -f testeConj

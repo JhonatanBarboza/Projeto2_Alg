@@ -1,6 +1,8 @@
 #ifndef CONJUNTO_H
   #define CONJUNTO_H
 
+  #define ERRO 1000010
+
   #define TAD_LISTA 0
   #define TAD_ARVORE 1
 

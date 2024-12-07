@@ -20,7 +20,6 @@ void no_apagar_recursivo(NO *no);
 NO *no_rodar_direita(NO *noA);
 NO *no_rodar_esquerda(NO *noA);
 int no_get_altura(NO *no);
-void no_trocar_max(NO *noTroca, NO *noRaiz, NO *noPai);
 NO *no_copiar_recursivo(NO *no);
 /*Funções auxiliares do nó*/
 
@@ -213,19 +212,18 @@ int avl_get_altura(AVL *avl){
   return no_get_altura(avl->noRaiz);
 }
 
-bool avl_remover(AVL *avl, int chave){
-  if(avl == NULL) return false;
+int avl_remover(AVL *avl, int chave){
+  if(avl == NULL) return ERRO;
 
   bool elementoRemovido = avl_remover_no(&(avl->noRaiz), chave);
   if(elementoRemovido){
     avl->tamanho--;
-    return true;
+    return chave;
   }
   //else:
-  return false;
+  return ERRO;
 }
 
-//Verificar se isso aqui funciona kk
 bool avl_remover_no(NO **pontNoRaiz, int chave){
   /*Casos a serem considerados na remoção:
     1. O nó é folha;
@@ -235,38 +233,56 @@ bool avl_remover_no(NO **pontNoRaiz, int chave){
   //Caso base da recursão:
   if(*pontNoRaiz == NULL) return false;
 
-  if((*pontNoRaiz)->chave == chave){
+  bool chaveRemovida = false;
+
+  if(chave < (*pontNoRaiz)->chave){
+    chaveRemovida = avl_remover_no(&((*pontNoRaiz)->noEsq), chave);
+  }
+  else if(chave > (*pontNoRaiz)->chave){
+    chaveRemovida = avl_remover_no(&((*pontNoRaiz)->noDir), chave);
+  }
+  else{
+    /*Encontramos o nó a ser removido*/
     if(((*pontNoRaiz)->noEsq == NULL) || ((*pontNoRaiz)->noDir == NULL)){
       /*O nó atual tem um ou nenhum filho -> resolve os casos 1 e 2*/
+      NO *noTemp = (*pontNoRaiz)->noEsq ? (*pontNoRaiz)->noEsq : (*pontNoRaiz)->noDir;
 
-      NO *noRemovido = *pontNoRaiz;
-      if((*pontNoRaiz)->noEsq == NULL) *pontNoRaiz = (*pontNoRaiz)->noDir;
-      if((*pontNoRaiz)->noDir == NULL) *pontNoRaiz = (*pontNoRaiz)->noEsq;
+      if(noTemp == NULL){
+        /*Nó folha*/
+        noTemp = *pontNoRaiz;
+        *pontNoRaiz = NULL;
+      }
+      else{
+        /*Há um filho*/
+        **pontNoRaiz = *noTemp;
+      }
 
-      no_apagar(&noRemovido);
-
+      no_apagar(&noTemp);
+      chaveRemovida = true;
     }
     else{
       /*O nó atual tem dois filhos -> resolve o caso 3*/
 
       /*Troca o nó atual pelo nó com a maior chave da sub-árvore
       esquerda em relação ao nó atual*/
-      no_trocar_max((*pontNoRaiz)->noEsq, *pontNoRaiz, *pontNoRaiz);
+      NO *sucessor = (*pontNoRaiz)->noEsq;
+      while (sucessor->noDir != NULL){
+        sucessor = sucessor->noDir;
+      }
+
+      (*pontNoRaiz)->chave = sucessor->chave;
+      chaveRemovida = avl_remover_no(&((*pontNoRaiz)->noEsq), sucessor->chave);
     }
   }
-  else if(chave < (*pontNoRaiz)->chave){
-    avl_remover_no(&(*pontNoRaiz)->noEsq, chave);
-  }
-  else if(chave > (*pontNoRaiz)->chave){
-    avl_remover_no(&(*pontNoRaiz)->noDir, chave);
-  }
 
-  if(*pontNoRaiz == NULL) return false;
+  if(!chaveRemovida) return false;
+  if(*pontNoRaiz == NULL) return true;
+
   /*Ajustando o fator de balanceamento*/
   (*pontNoRaiz)->FB = no_get_altura((*pontNoRaiz)->noEsq) - no_get_altura((*pontNoRaiz)->noDir);
 
   /*Balanceando, se necessário*/
-  if((*pontNoRaiz)->FB == -2){
+  if((*pontNoRaiz)->FB < -1){
     if((*pontNoRaiz)->noDir->FB <= 0) *pontNoRaiz = no_rodar_esquerda(*pontNoRaiz); /*Rotação esquerda*/
     else{
       /*Rotação direita esquerda*/
@@ -275,7 +291,7 @@ bool avl_remover_no(NO **pontNoRaiz, int chave){
     }
   }
 
-  if((*pontNoRaiz)->FB == 2){
+  if((*pontNoRaiz)->FB > 1){
     if((*pontNoRaiz)->noEsq->FB >= 0) *pontNoRaiz = no_rodar_direita(*pontNoRaiz); /*Rotação direita*/
     /*Rotação esquerda direita*/
     else{
@@ -285,21 +301,6 @@ bool avl_remover_no(NO **pontNoRaiz, int chave){
   }
 
   return true;
-}
-
-void no_trocar_max(NO *noTroca, NO *noRaiz, NO *noPai){
-  if(noTroca->noDir != NULL){
-    /*Achando o máximo nó folha direito possível*/
-    no_trocar_max(noTroca->noDir, noRaiz, noTroca);
-    return;
-  }
-
-  if(noRaiz == noPai) noPai->noEsq = noTroca->noEsq;
-  else noPai->noDir = noTroca->noEsq;
-
-  noRaiz->chave = noTroca->chave;
-  no_apagar(&noTroca);
-  return;
 }
 
 /*Imprime os elementos da árvore em ordem crescente (in-ordem: 
@@ -369,4 +370,19 @@ NO *busca_binaria_avl(NO *noRaiz, int chave){
 
   if(noRaiz->chave > chave) return busca_binaria_avl(noRaiz->noEsq, chave);
   else return busca_binaria_avl(noRaiz->noDir, chave);
+}
+
+/*Retorna a chave armazenada na raiz da árvore ou ERRO
+se a árvore estiver vazia*/
+int avl_get_chave_raiz(AVL *avl){
+  if(avl == NULL) return ERRO;
+  if(avl->tamanho <= 0) return ERRO;
+
+  return avl->noRaiz->chave;
+}
+
+int avl_get_tamanho(AVL *avl){
+  if(avl == NULL) return ERRO;
+
+  return avl->tamanho;
 }
