@@ -1,13 +1,13 @@
 all: compile
-	gcc avl.o avl-tree-test.o -o avl-tree-test -std=c99 -Wall
+	gcc avl.o testeAVL.o -o testeAVL -std=c99 -Wall
 	rm *.o
 
 compile:
 	gcc -c ../bibliotecas/impl/AVL.c -o avl.o
-	gcc -c avl-tree-test.c -o avl-tree-test.o
+	gcc -c testeAVL.c -o testeAVL.o
 
 run:
-	./avl-tree-test
+	./testeAVL
 
 clean:
-	rm -f avl-tree-test
+	rm -f testeAVL

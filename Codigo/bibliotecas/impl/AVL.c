@@ -313,9 +313,9 @@ void avl_imprimir(AVL *avl){
 
 void avl_imprimir_arv(NO *noRaiz){
   if(noRaiz != NULL){
-    imprimirOrdenada(noRaiz->noEsq);
+    avl_imprimir_arv(noRaiz->noEsq);
     printf("%d ", noRaiz->chave);
-    imprimirOrdenada(noRaiz->noDir);
+    avl_imprimir_arv(noRaiz->noDir);
   }
 
   return;
