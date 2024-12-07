@@ -257,8 +257,6 @@ A análise a seguir considera apenas a lógica implementada no arquivo `lista.c`
      - Divisão do vetor em cada chamada recursiva: $$O(\log n)$$ no pior caso.  
    - **Complexidade Total**: $$O(\log n)$$.  
 
----
-
 **Resumo Geral:**  
 - Funções que envolvem apenas criação, liberação ou consultas diretas apresentam complexidade $$O(1)$$.  
 - Funções que manipulam a lista (como inserção e remoção) têm complexidade $$O(n)$$, devido ao deslocamento de elementos.  
