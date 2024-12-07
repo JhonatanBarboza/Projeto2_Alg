@@ -20,7 +20,7 @@ Ao final do programa, os conjuntos criados são apagados da memória utilizando 
 
 ### TAD Conjunto
 
-O código importa os arquivos `list.h`, `abb.h` e `conjunto.h` e define a estrutura `conjunto`. Essa estrutura contém o campo `TAD`, que indica o tipo de estrutura de dados utilizada (lista ou árvore binária), o tamanho do conjunto e dois ponteiros: um para a lista (`conjuntoLista`) e outro para a árvore binária (`conjuntoABB`). Apenas um desses ponteiros será utilizado, dependendo da estrutura escolhida.
+O código importa os arquivos `list.h`, `avl.h` e `conjunto.h` e define a estrutura `conjunto`. Essa estrutura contém o campo `TAD`, que indica o tipo de estrutura de dados utilizada (lista ou árvore binária), o tamanho do conjunto e dois ponteiros: um para a lista (`conjuntoLista`) e outro para a árvore binária (`conjuntoAVL`). Apenas um desses ponteiros será utilizado, dependendo da estrutura escolhida.
 
 A ideia principal das funções é gerenciar as chamadas para as funções específicas da lista ou da árvore binária, garantindo que as operações sejam executadas de acordo com a estrutura de dados escolhida.
 
@@ -86,7 +86,7 @@ A complexidade da função `main` é dominada pelo custo da leitura e inserção
 
 ### TAD Conjunto:
 
-A análise a seguir considera apenas a lógica implementada no arquivo `conjunto.c`, sem detalhar as funções chamadas (como `lista_inserir`, `abb_inserir`, entre outras). A complexidade destas funções será especificada posteriormente.
+A análise a seguir considera apenas a lógica implementada no arquivo `conjunto.c`, sem detalhar as funções chamadas (como `lista_inserir`, `avl_inserir`, entre outras). A complexidade destas funções será especificada posteriormente.
 
 
 1. **`conjunto_criar`**  
@@ -153,7 +153,7 @@ A análise a seguir considera apenas a lógica implementada no arquivo `conjunto
    - **Complexidade Total**: $$O(1)$$, desconsiderando a complexidade das funções chamadas.  
 
 **Resumo Geral:**  
-Todas as funções do arquivo `conjunto.c` apresentam complexidade constante $$O(1)$$ com relação à lógica interna do código. A complexidade completa dependerá diretamente das funções chamadas (`lista_inserir`, `abb_remover`, etc.), cujas complexidades serão analisadas separadamente.
+Todas as funções do arquivo `conjunto.c` apresentam complexidade constante $$O(1)$$ com relação à lógica interna do código. A complexidade completa dependerá diretamente das funções chamadas (`lista_inserir`, `avl_remover`, etc.), cujas complexidades serão analisadas separadamente.
 
 
 ### TAD Lista:
