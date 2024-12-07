@@ -14,6 +14,6 @@
   /*A fazer*/
   /*
   int avl_busca(AVL *avl, int chave);
-  AVL *avl_copiar(AVL *avl);*/
+  */
 
 #endif

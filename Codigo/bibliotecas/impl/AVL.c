@@ -21,6 +21,7 @@ NO *no_rodar_direita(NO *noA);
 NO *no_rodar_esquerda(NO *noA);
 int no_get_altura(NO *no);
 void no_trocar_max(NO *noTroca, NO *noRaiz, NO *noPai);
+NO *no_copiar_recursivo(NO *no);
 /*Funções auxiliares do nó*/
 
 struct avl_{
@@ -303,7 +304,7 @@ void no_trocar_max(NO *noTroca, NO *noRaiz, NO *noPai){
 void avl_imprimir(AVL *avl){
   avl_imprimir_arv(avl->noRaiz);
   printf("\n");
-  
+
   return;
 }
 
@@ -315,4 +316,29 @@ void avl_imprimir_arv(NO *noRaiz){
   }
 
   return;
+}
+
+AVL *avl_copiar(AVL *avl){
+  if(avl == NULL) return NULL;
+
+  AVL *copiaAvl = avl_criar();
+  if(copiaAvl == NULL) return NULL;
+
+  copiaAvl->noRaiz = no_copiar_recursivo(avl->noRaiz);
+  copiaAvl->tamanho = avl->tamanho;
+
+  return copiaAvl;
+}
+
+NO *no_copiar_recursivo(NO *no){
+  if(no == NULL) return NULL;
+
+  NO *noNovo = no_criar(no->chave, NULL, NULL);
+  if(noNovo == NULL) return NULL;
+
+  noNovo->FB = no->FB;
+  noNovo->noEsq = no_copiar_recursivo(no->noEsq);
+  noNovo->noDir = no_copiar_recursivo(no->noDir);
+
+  return noNovo;
 }
