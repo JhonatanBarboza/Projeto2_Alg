@@ -33,6 +33,7 @@ struct avl_{
 NO *avl_inserir_no(NO *noRaiz, NO *noNovo, bool *jaInserido);
 bool avl_remover_no(NO **pontNoRaiz, int chave);
 void avl_imprimir_arv(NO *noRaiz);
+NO *busca_binaria_avl(NO *noRaiz, int chave);
 /*Funções auxiliares da árvore*/
 
 AVL *avl_criar(void){
@@ -301,6 +302,8 @@ void no_trocar_max(NO *noTroca, NO *noRaiz, NO *noPai){
   return;
 }
 
+/*Imprime os elementos da árvore em ordem crescente (in-ordem: 
+esquerda, raiz, direita)*/
 void avl_imprimir(AVL *avl){
   avl_imprimir_arv(avl->noRaiz);
   printf("\n");
@@ -318,6 +321,8 @@ void avl_imprimir_arv(NO *noRaiz){
   return;
 }
 
+/*Cria e retorna uma cópia profunda da árvore, onde todos os nós
+são duplicados mantendo a mesma estrutura*/
 AVL *avl_copiar(AVL *avl){
   if(avl == NULL) return NULL;
 
@@ -330,6 +335,8 @@ AVL *avl_copiar(AVL *avl){
   return copiaAvl;
 }
 
+/*Função auxiliar recursiva que cria uma cópia profunda de um nó
+e todos os seus descendentes*/
 NO *no_copiar_recursivo(NO *no){
   if(no == NULL) return NULL;
 
@@ -341,4 +348,25 @@ NO *no_copiar_recursivo(NO *no){
   noNovo->noDir = no_copiar_recursivo(no->noDir);
 
   return noNovo;
+}
+
+/*Busca um elemento na árvore. Retorna o elemento se encontrado
+ou ERRO caso contrário*/
+int avl_busca(AVL *avl, int chave){
+  if(avl == NULL) return ERRO;
+  if(avl->tamanho == 0) return ERRO;
+
+  NO *noChave = busca_binaria_avl(avl->noRaiz, chave);
+  if(noChave == NULL) return ERRO;
+
+  return noChave->chave;
+}
+
+/*Função auxiliar recursiva que implementa a busca binária na árvore.
+Retorna o nó contendo a chave buscada ou NULL se não encontrar*/
+NO *busca_binaria_avl(NO *noRaiz, int chave){
+  if((noRaiz == NULL) || (noRaiz->chave == chave)) return noRaiz;
+
+  if(noRaiz->chave > chave) return busca_binaria_avl(noRaiz->noEsq, chave);
+  else return busca_binaria_avl(noRaiz->noDir, chave);
 }
