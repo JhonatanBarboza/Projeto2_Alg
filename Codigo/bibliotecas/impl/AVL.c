@@ -31,6 +31,7 @@ struct avl_{
 /*Funções auxiliares da árvore*/
 NO *avl_inserir_no(NO *noRaiz, NO *noNovo, bool *jaInserido);
 bool avl_remover_no(NO **pontNoRaiz, int chave);
+void avl_imprimir_arv(NO *noRaiz);
 /*Funções auxiliares da árvore*/
 
 AVL *avl_criar(void){
@@ -90,7 +91,7 @@ bool avl_inserir(AVL *avl, int chave){
 
   /*Inserindo o nó na árvore*/
   /*Atribuir o resultado de avl_inserir_no diretamente ao nó raiz poderia quebrar a árvore caso a função retorne NULL. Por causa disso, vamos utilizar o noTemp*/
-  bool jaInserido = false; // Flag para retornamos falso caso o elemento já tenha sido inserido
+  bool jaInserido = false; // Flag para retornamos falso caso o elemento já exista na árvore
 
   NO *noTemp = avl_inserir_no(avl->noRaiz, noNovo, &jaInserido);
   if((noTemp == NULL) || (jaInserido == true)) return false;
@@ -213,7 +214,13 @@ int avl_get_altura(AVL *avl){
 bool avl_remover(AVL *avl, int chave){
   if(avl == NULL) return false;
 
-  return avl_remover_no(&(avl->noRaiz), chave);
+  bool elementoRemovido = avl_remover_no(&(avl->noRaiz), chave);
+  if(elementoRemovido){
+    avl->tamanho--;
+    return true;
+  }
+  //else:
+  return false;
 }
 
 //Verificar se isso aqui funciona kk
@@ -235,6 +242,7 @@ bool avl_remover_no(NO **pontNoRaiz, int chave){
       if((*pontNoRaiz)->noDir == NULL) *pontNoRaiz = (*pontNoRaiz)->noEsq;
 
       no_apagar(&noRemovido);
+
     }
     else{
       /*O nó atual tem dois filhos -> resolve o caso 3*/
@@ -252,7 +260,6 @@ bool avl_remover_no(NO **pontNoRaiz, int chave){
   }
 
   if(*pontNoRaiz == NULL) return false;
-  //else:
   /*Ajustando o fator de balanceamento*/
   (*pontNoRaiz)->FB = no_get_altura((*pontNoRaiz)->noEsq) - no_get_altura((*pontNoRaiz)->noDir);
 
@@ -290,5 +297,22 @@ void no_trocar_max(NO *noTroca, NO *noRaiz, NO *noPai){
 
   noRaiz->chave = noTroca->chave;
   no_apagar(&noTroca);
+  return;
+}
+
+void avl_imprimir(AVL *avl){
+  avl_imprimir_arv(avl->noRaiz);
+  printf("\n");
+  
+  return;
+}
+
+void avl_imprimir_arv(NO *noRaiz){
+  if(noRaiz != NULL){
+    imprimirOrdenada(noRaiz->noEsq);
+    printf("%d ", noRaiz->chave);
+    imprimirOrdenada(noRaiz->noDir);
+  }
+
   return;
 }
