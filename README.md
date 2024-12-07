@@ -52,7 +52,43 @@ A ideia principal das funções é gerenciar as chamadas para as funções espec
 9. **`conjunto_copiar`**: Cria uma cópia de um conjunto, alocando um novo espaço na memória e copiando os elementos da estrutura original.
 
 
-### TAD Lista:
+### TAD Lista  
+
+O objetivo do arquivo `lista.c` é implementar uma lista sequencial ordenada com suporte a busca binária. Ele contém as principais funções relacionadas à manipulação da lista, como inserção, remoção, busca binária e outras operações úteis. Abaixo segue uma breve descrição de cada função:  
+
+#### Descrição das Funções
+
+1. **`lista_criar`**  
+   - Aloca espaço na memória para um ponteiro do tipo lista, inicializa o tamanho como 0 e retorna a lista criada.  
+
+2. **`lista_apagar`**  
+   - Libera a memória da lista passada como argumento e define o ponteiro para `NULL`.  
+
+3. **`lista_inserir`**  
+   - Insere elementos em ordem crescente. Por se tratar de uma lista ordenada, essa função não permite a inserção de elementos repetidos. Após a inserção, incrementa o tamanho da lista e retorna `true` se a operação for bem-sucedida.  
+
+4. **`lista_remover`**  
+   - Utiliza a busca binária para localizar o elemento a ser removido. Após encontrar o elemento, remove-o e desloca os elementos subsequentes para a esquerda. No final, decrementa o tamanho da lista e retorna o elemento removido.  
+
+5. **`lista_imprimir`**  
+   - Imprime os elementos da lista passada como parâmetro.  
+
+6. **`lista_busca`**  
+   - Chama a função `buscaBinaria` para encontrar a chave especificada. A busca binária funciona de forma recursiva, dividindo a lista ao meio sucessivamente até localizar o elemento. Caso a busca seja bem-sucedida, retorna o elemento; caso contrário, retorna um erro.  
+
+7. **`lista_copiar`**  
+   - Faz uma cópia da lista passada como parâmetro e retorna a nova lista criada.  
+
+8. **`lista_consulta`**  
+   - Permite consultar elementos pelo índice, em vez da chave. Retorna o elemento localizado no índice especificado como parâmetro.  
+
+
+Essa implementação prioriza eficiência, especialmente nas operações de busca e inserção, aproveitando as características de uma lista ordenada e a busca binária.
+
+
+
+
+
 ### TAD Arvora Binaria de Busca AVL:
 
 ## Complexidade das operação:
@@ -157,5 +193,77 @@ Todas as funções do arquivo `conjunto.c` apresentam complexidade constante $$O
 
 
 ### TAD Lista:
+
+A análise a seguir considera apenas a lógica implementada no arquivo `lista.c`.
+
+
+1. **`lista_criar`**  
+   - **Descrição**: Aloca memória para uma lista e inicializa seu tamanho como 0.  
+   - **Operações principais**:  
+     - Alocação de memória: $$O(1)$$.  
+     - Inicialização do tamanho: $$O(1)$$.  
+   - **Complexidade Total**: $$O(1)$$.  
+
+2. **`lista_apagar`**  
+   - **Descrição**: Libera a memória de uma lista e define o ponteiro como `NULL`.  
+   - **Operações principais**:  
+     - Liberação de memória: $$O(1)$$.  
+     - Atribuição de `NULL`: $$O(1)$$.  
+   - **Complexidade Total**: $$O(1)$$.  
+
+3. **`lista_inserir`**  
+   - **Descrição**: Insere um elemento em ordem crescente na lista, deslocando elementos para a direita se necessário.  
+   - **Operações principais**:  
+     - Busca pela posição correta: $$O(n)$$, onde $$n$$ é o número de elementos na lista.  
+     - Deslocamento de elementos: $$O(n)$$ no pior caso (inserção no início).  
+   - **Complexidade Total**: $$O(n)$$.  
+
+4. **`lista_remover`**  
+   - **Descrição**: Remove um elemento da lista, deslocando elementos subsequentes para preencher o espaço.  
+   - **Operações principais**:  
+     - Busca binária para encontrar o elemento: $$O(\log n)$$.  
+     - Deslocamento de elementos: $$O(n)$$ no pior caso (remoção no início).  
+   - **Complexidade Total**: $$O(n)$$.  
+
+5. **`lista_imprimir`**  
+   - **Descrição**: Imprime todos os elementos da lista, ignorando posições marcadas como `ERRO`.  
+   - **Operações principais**:  
+     - Iteração pelos elementos: $$O(n)$$.  
+   - **Complexidade Total**: $$O(n)$$.  
+
+6. **`lista_busca`**  
+   - **Descrição**: Busca um elemento na lista utilizando a função de busca binária.  
+   - **Operações principais**:  
+     - Chamada à função `buscaBinariaLista`: $$O(\log n)$$.  
+   - **Complexidade Total**: $$O(\log n)$$.  
+
+7. **`lista_copiar`**  
+   - **Descrição**: Cria uma cópia da lista, inserindo elemento por elemento na nova lista.  
+   - **Operações principais**:  
+     - Criação da nova lista: $$O(1)$$.  
+     - Iteração e inserção de elementos: $$O(n \cdot C_{\text{inserir}})$$, onde $$C_\text{inserir}$$ é a complexidade da função `lista_inserir`.  
+   - **Complexidade Total**: $$O(n)$$ (considerando apenas a lógica interna).  
+
+8. **`lista_consultar`**  
+   - **Descrição**: Consulta o elemento em uma posição específica da lista.  
+   - **Operações principais**:  
+     - Verificação de limites: $$O(1)$$.  
+     - Acesso ao elemento no índice: $$O(1)$$.  
+   - **Complexidade Total**: $$O(1)$$.  
+
+9. **`buscaBinariaLista`**  
+   - **Descrição**: Realiza busca binária recursiva para localizar uma chave em um vetor.  
+   - **Operações principais**:  
+     - Divisão do vetor em cada chamada recursiva: $$O(\log n)$$ no pior caso.  
+   - **Complexidade Total**: $$O(\log n)$$.  
+
+---
+
+**Resumo Geral:**  
+- Funções que envolvem apenas criação, liberação ou consultas diretas apresentam complexidade $$O(1)$$.  
+- Funções que manipulam a lista (como inserção e remoção) têm complexidade $$O(n)$$, devido ao deslocamento de elementos.  
+- Operações de busca se beneficiam da busca binária, com complexidade $$O(\log n)$$.
+
+
 ### TAD Arvora Binaria de Buca AVL:
 
