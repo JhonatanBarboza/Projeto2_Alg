@@ -1,95 +1,161 @@
-Entrada:
+## Descrição do projeto:  
+Conjuntos, conceito fundamental da Teoria dos Conjuntos, representam coleções de objetos chamados elementos, cuja relação de pertinência define se pertencem ou não ao conjunto. Com ampla aplicação em sistemas computacionais, os conjuntos aparecem em diversas linguagens de programação como estruturas de dados e são utilizados em problemas matemáticos, de otimização e estatística.
 
-0                    //   Qual TAD deseja utilizar o 0 ou 1 
+## Objetivo:  
+O objetivo do projeto foi implementar três TADs, visando desenvolver tanto as operações básicas de cada TAD quanto as operações específicas do conjunto, como pertinência, união e interseção, otimizando ao máximo a complexidade computacional. Para isso, escolhemos implementar os TADs utilizando uma lista com busca binária, uma árvore binária de busca AVL e um TAD Conjunto, responsável por gerenciar as operações durante a execução. 
 
-5                    //   Tamanho do primeiro conjunto
+## Justificativa:  
+A escolha de implementar o TAD com uma lista utilizando busca binária deve-se ao fato de que a operação de busca pode ser realizada em $$O(\log n)$$. Apesar de as operações de inserção e remoção apresentarem complexidade $$O(n)$$, no geral, o desempenho é satisfatório em cenários onde a busca é predominante. Já a árvore binária de busca AVL foi escolhida por sua eficiência consistente, com complexidade $$O(\log n)$$ para as operações de busca, inserção e remoção, garantindo bom desempenho mesmo no pior caso. 
 
-3                    //   Tamanho do segundo conjunto
+## Principais operações:
+### Main:
 
-1 2 3 4 5            //   Primeiro conjunto 
+A função main gerencia as operações e o fluxo do programa. Inicialmente, ela solicita ao usuário que escolha a estrutura de dados a ser utilizada (0 para lista e 1 para ABB AVL). Com base nessa escolha, dois conjuntos (conjA e conjB) são criados utilizando a estrutura selecionada.
 
-7 3 8                //   Segundo conjunto
+Em seguida, o programa lê o tamanho dos conjuntos A e B. Caso ambos os tamanhos sejam zero, uma mensagem informando que os conjuntos estão vazios é exibida, e o programa é encerrado. Caso contrário, os elementos de cada conjunto são lidos e inseridos nas respectivas estruturas de dados por meio da função conjunto_inserir.
 
-1       ***         
+Posteriormente, o programa solicita ao usuário que selecione a operação a ser realizada entre os conjuntos. As operações disponíveis são: verificar a pertinência de um elemento a um conjunto (PERTENCE), realizar a união dos conjuntos (UNIAO) ou calcular a interseção dos conjuntos (INTERSEC). Com base na operação escolhida, a função correspondente é executada para obter e exibir o resultado.
 
-2                   //   Elemento a ser buscado no conjunto A
+Ao final do programa, os conjuntos criados são apagados da memória utilizando a função conjunto_apagar, e o programa é encerrado com sucesso.
 
+### TAD Conjunto
 
+O código importa os arquivos `list.h`, `abb.h` e `conjunto.h` e define a estrutura `conjunto`. Essa estrutura contém o campo `TAD`, que indica o tipo de estrutura de dados utilizada (lista ou árvore binária), o tamanho do conjunto e dois ponteiros: um para a lista (`conjuntoLista`) e outro para a árvore binária (`conjuntoABB`). Apenas um desses ponteiros será utilizado, dependendo da estrutura escolhida.
 
-Se o último número for 1, a operação de verificação de pertencimento é realizada para verificar se o elemento está no conjunto A.
-Se o último número for 2, realiza-se a operação de união entre dois conjuntos.
-Se o último número for 3, realiza-se a operação de interseção entre dois conjuntos.
-***
+A ideia principal das funções é gerenciar as chamadas para as funções específicas da lista ou da árvore binária, garantindo que as operações sejam executadas de acordo com a estrutura de dados escolhida.
 
-SAIDA 
+#### Descrição das Funções
 
-1 - Pertence ou não pertence
-2 - Cunjunto união
-3 - Conjunto interceção 
+1. **`conjunto_criar`**: Aloca espaço na memória para criar um conjunto, inicializando-o conforme o tipo de estrutura especificado (`lista` ou `árvore binária`).
 
-***
-CASOS TESTE:
+2. **`conjunto_apagar`**: Libera a memória do conjunto, utilizando as funções específicas da estrutura escolhida.
 
-0
-5
-3
-1 2 3 4 5
-7 3 8
-1
-1
+3. **`conjunto_inserir`**: Insere um elemento no conjunto e incrementa seu tamanho.
 
-saida: Pertence
+4. **`conjunto_remover`**: Remove um elemento específico do conjunto, decrementa seu tamanho e retorna o elemento removido.
 
+5. **`conjunto_imprimir`**: Imprime os elementos do conjunto utilizando a função correspondente à estrutura de dados.
 
-0
-4
-4
-1 3 5 7
-2 3 6 8
-2
- 
-saida: 1 2 3 5 6 7 8
+6. **`conjunto_pertence`**: Verifica se um elemento pertence ao conjunto. Retorna `true` se o elemento for encontrado e `false` caso contrário.
 
+7. **`conjunto_uniao`**: Realiza a união de dois conjuntos. 
+   - Verifica se ambos não estão vazios.
+   - Cria um novo conjunto e insere os elementos do conjunto A nele.
+   - Para listas, insere diretamente os elementos de B, pois a função `lista_inserir` evita duplicatas.
+   - Para árvores, é necessário ajustar a lógica para lidar com a remoção e inserção de elementos (essa parte está pendente no código).
 
-0
-6
-5
-1 2 3 4 5 6
-4 5 6 7 8
-3
+8. **`conjunto_interseccao`**: Calcula a interseção de dois conjuntos.
+   - Verifica se ambos não estão vazios.
+   - Cria um novo conjunto e insere elementos que pertencem simultaneamente aos dois conjuntos originais.
+   - Para árvores, segue a mesma lógica de manipulação de cópias utilizada na união.
+
+9. **`conjunto_copiar`**: Cria uma cópia de um conjunto, alocando um novo espaço na memória e copiando os elementos da estrutura original.
 
 
-saida: 4 5 6
+### TAD Lista:
+### TAD Arvora Binaria de Busca AVL:
+
+## Complexidade das operação:
+O objetivo é analisar separadamente a complexidade de cada função implementada, considerando apenas o código presente em cada uma delas. Para funções que realizam chamadas a TADs externos, a análise se limitará à lógica interna da função, desconsiderando a complexidade das funções chamadas. Ao final, será feito um levantamento geral para determinar a complexidade predominante de cada operação.
+
+### Main:  
+Na função `main`, as operações realizadas têm complexidade diretamente relacionada ao número de elementos nos conjuntos e ao tipo de estrutura escolhida. Segue a análise:  
+
+1. **Leitura do TAD**:  
+   - A escolha da estrutura de dados é uma simples leitura de entrada e tem complexidade $$O(1)$$.  
+
+2. **Leitura dos Tamanhos dos Conjuntos (`tamA` e `tamB`)**:  
+   - São realizadas duas operações de leitura, cada uma com complexidade $$O(1)$$.  
+
+3. **Inserção de Elementos nos Conjuntos (`conjunto_inserir`)**:  
+   - A `main` executa dois laços de leitura e inserção:  
+     - Para `tamA` elementos no conjunto `A`, a complexidade é $$O(tamA \cdot C_{\text{inserir}})$$.  
+     - Para `tamB` elementos no conjunto `B`, a complexidade é $$O(tamB \cdot C_{\text{inserir}})$$.  
+   - A complexidade final depende da implementação da função `conjunto_inserir`.  
+
+4. **Escolha da Operação e Execução**:  
+   - A leitura da operação tem complexidade $$O(1)$$.  
+   - A execução da operação (pertence, união ou interseção) depende do código interno de cada função chamada, sendo detalhada posteriormente.  
+
+5. **Liberação dos Conjuntos (`conjunto_apagar`)**:  
+   - São chamadas duas vezes para liberar os conjuntos `A` e `B`. A complexidade depende do número de elementos nos conjuntos e da implementação da função `conjunto_apagar`.  
+
+**Resumo Geral da Main**:  
+A complexidade da função `main` é dominada pelo custo da leitura e inserção dos elementos, além das operações executadas sobre os conjuntos. Estes detalhes são dependentes das implementações específicas das funções chamadas.
 
 
-0
-50
-50
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50
-51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100
-1
-25
+### TAD Conjunto:
 
-saida: pertence
+A análise a seguir considera apenas a lógica implementada no arquivo `conjunto.c`, sem detalhar as funções chamadas (como `lista_inserir`, `abb_inserir`, entre outras). A complexidade destas funções será especificada posteriormente.
 
 
-0
-50
-50
-1 3 5 7 9 11 13 15 17 19 21 23 25 27 29 31 33 35 37 39 41 43 45 47 49 51 53 55 57 59 61 63 65 67 69 71 73 75 77 79 81 83 85 87 89 91 93 95 97 99
-2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 66 68 70 72 74 76 78 80 82 84 86 88 90 92 94 96 98 100
-2
+1. **`conjunto_criar`**  
+   - **Descrição**: Aloca memória para o conjunto e inicializa o ponteiro correspondente à estrutura escolhida (lista ou árvore).  
+   - **Operações principais**:  
+     - Alocação de memória: $$O(1)$$.  
+     - Inicialização de ponteiros: $$O(1)$$.  
+   - **Complexidade Total**: $$O(1)$$.  
+
+2. **`conjunto_apagar`**  
+   - **Descrição**: Libera a memória ocupada pelo conjunto.  
+   - **Operações principais**:  
+     - Liberação do conjunto com chamada à função específica (detalhada posteriormente).  
+     - Liberação da memória do próprio `conjunto`.  
+   - **Complexidade Total**: $$O(1)$$, desconsiderando a complexidade das funções chamadas.  
+
+3. **`conjunto_inserir`**  
+   - **Descrição**: Insere um elemento no conjunto e incrementa o tamanho.  
+   - **Operações principais**:  
+     - Verifica o tipo de estrutura e chama a função correspondente para inserção.  
+     - Incrementa o tamanho do conjunto.  
+   - **Complexidade Total**: $$O(1)$$, desconsiderando a complexidade da função chamada.  
+
+4. **`conjunto_remover`**  
+   - **Descrição**: Remove um elemento do conjunto e decrementa o tamanho.  
+   - **Operações principais**:  
+     - Verifica o tipo de estrutura e chama a função correspondente para remoção.  
+     - Atualiza o tamanho do conjunto.  
+   - **Complexidade Total**: $$O(1)$$, desconsiderando a complexidade da função chamada.  
+
+5. **`conjunto_imprimir`**  
+   - **Descrição**: Imprime os elementos do conjunto.  
+   - **Operações principais**:  
+     - Verifica o tipo de estrutura e chama a função de impressão correspondente.  
+   - **Complexidade Total**: $$O(1)$$, desconsiderando a complexidade da função chamada.  
+
+6. **`conjunto_pertence`**  
+   - **Descrição**: Verifica se um elemento pertence ao conjunto.  
+   - **Operações principais**:  
+     - Chama a função de busca correspondente à estrutura escolhida.  
+     - Retorna o resultado da busca.  
+   - **Complexidade Total**: $$O(1)$$, desconsiderando a complexidade da função chamada.  
+
+7. **`conjunto_uniao`**  
+   - **Descrição**: Realiza a união de dois conjuntos.  
+   - **Operações principais**:  
+     - Copia o conjunto A.  
+     - Chama as funções de inserção para adicionar os elementos do conjunto B.  
+   - **Complexidade Total**: $$O(1)$$, desconsiderando a complexidade das funções chamadas.  
+
+8. **`conjunto_interseccao`**  
+   - **Descrição**: Calcula a interseção de dois conjuntos.  
+   - **Operações principais**:  
+     - Cria um novo conjunto.  
+     - Chama a função de busca para verificar a presença de elementos nos dois conjuntos.  
+     - Insere os elementos encontrados na interseção.  
+   - **Complexidade Total**: $$O(1)$$, desconsiderando a complexidade das funções chamadas.  
+
+9. **`conjunto_copiar`**  
+   - **Descrição**: Cria uma cópia de um conjunto.  
+   - **Operações principais**:  
+     - Cria um novo conjunto.  
+     - Chama a função de cópia correspondente à estrutura utilizada.  
+   - **Complexidade Total**: $$O(1)$$, desconsiderando a complexidade das funções chamadas.  
+
+**Resumo Geral:**  
+Todas as funções do arquivo `conjunto.c` apresentam complexidade constante $$O(1)$$ com relação à lógica interna do código. A complexidade completa dependerá diretamente das funções chamadas (`lista_inserir`, `abb_remover`, etc.), cujas complexidades serão analisadas separadamente.
 
 
-saida: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100
+### TAD Lista:
+### TAD Arvora Binaria de Buca AVL:
 
-
-
-0
-50
-50
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50
-51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100
-3
-
-saida: conjunto vazio
