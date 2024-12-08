@@ -52,7 +52,7 @@ A ideia principal das funções é gerenciar as chamadas para as funções espec
 9. **`conjunto_copiar`**: Cria uma cópia de um conjunto, alocando um novo espaço na memória e copiando os elementos da estrutura original.
 
 
-### TAD Lista  
+### TAD Lista Sequencial  
 
 O objetivo do arquivo `lista.c` é implementar uma lista sequencial ordenada com suporte a busca binária. Ele contém as principais funções relacionadas à manipulação da lista, como inserção, remoção, busca binária e outras operações úteis. Abaixo segue uma breve descrição de cada função:  
 
@@ -85,36 +85,45 @@ O objetivo do arquivo `lista.c` é implementar uma lista sequencial ordenada com
 
 Essa implementação prioriza eficiência, especialmente nas operações de busca e inserção, aproveitando as características de uma lista ordenada e a busca binária.
 
-### TAD Arvora Binaria de Busca AVL:
+### TAD Árvore Binária de Busca AVL  
 
-o intuito desta desta tad é implemantar uma arvore binaria de busca AVL. esta arvore tem a caracteristica de estar sempre balanceada ou seja a diferença entre a altura de qualquer subarvores esqueda e direita nunca sera maior que 1. casos isso o cora durante uma incerção ou remoção a arvore excuta rotações para corrigir o balamceamento.
+O objetivo do arquivo `AVL.c` é implementar uma **Árvore Binária de Busca AVL** (uma árvore de busca balanceada). A característica principal dessa estrutura é o balanceamento automático, que garante que a diferença entre as alturas das subárvores esquerda e direita de qualquer nó nunca seja maior que 1. Caso essa condição seja violada após uma inserção ou remoção, a árvore realiza rotações para corrigir o balanceamento.
 
-começamos a implementação importando a ABB.h com as definições das funções do tad, em seguia definimo a struct no e abb que seviram para organizar a abb avl.em seguida vem a definições das funções alxiliares.
+A implementação inclui definições auxiliares para criar, remover, balancear e acessar os nós, além das funções principais do TAD AVL.
 
-#### Descrição das Funções
+#### Descrição das Funções  
 
+1. **`avl_criar`**  
+   - Aloca espaço na memória para uma árvore AVL, inicializa a raiz como `NULL` e o tamanho como 0, e retorna a estrutura criada.  
 
-avl_criar
+2. **`avl_apagar`**  
+   - Remove todos os nós da árvore de forma recursiva em pós-ordem, utilizando a função auxiliar `no_apagar_recursivo`, e desaloca a estrutura AVL.  
 
+3. **`avl_inserir`**  
+   - Insere um elemento na árvore AVL, mantendo o balanceamento. Cria um novo nó com a chave a ser inserida e utiliza a função auxiliar `avl_inserir_no` para realizar a inserção como em uma ABB e corrigir o balanceamento através de rotações, se necessário.  
 
+4. **`avl_remover`**  
+   - Remove um nó que contém a chave especificada. Lida com os três casos de remoção (nó folha, nó com uma subárvore e nó com duas subárvores) usando a função auxiliar `avl_remover_no`, que também realiza as rotações necessárias para restaurar o balanceamento.  
 
-avl_apagar
-avl_inserir
-avl_remover
-avl_get_altura
-avl_get_tamanho
-avl_copiar
-avl_imprimir
-avl_busca
-avl_get_chave_raiz
+5. **`avl_get_altura`**  
+   - Calcula e retorna a altura da árvore ou de uma subárvore específica.  
 
+6. **`avl_get_tamanho`**  
+   - Retorna o número total de nós na árvore.  
 
+7. **`avl_copiar`**  
+   - Cria uma cópia profunda da árvore AVL, duplicando todos os nós enquanto mantém a mesma estrutura, com o auxílio da função recursiva `no_copiar_recursivo`.  
 
+8. **`avl_imprimir`**  
+   - Imprime os elementos da árvore em ordem crescente (percurso in-ordem), utilizando a função auxiliar `avl_imprimir_arv`.  
 
+9. **`avl_busca`**  
+   - Tenta encontrar a chave especificada na árvore, chamando a função auxiliar `busca_binaria_avl`, que realiza uma busca binária recursiva até encontrar o elemento ou retornar um erro.  
 
+10. **`avl_get_chave_raiz`**  
+    - Retorna a chave armazenada na raiz da árvore ou um erro, caso a árvore esteja vazia.  
 
-
-
+A implementação assegura que as operações de busca, inserção e remoção sejam executadas de forma eficiente, com complexidade garantida de $$O(\log n)$$ no pior caso, graças ao balanceamento automático proporcionado pelas rotações AVL. 
 
 
 ## Complexidade das operação:
@@ -218,76 +227,149 @@ A análise a seguir considera apenas a lógica implementada no arquivo `conjunto
 Todas as funções do arquivo `conjunto.c` apresentam complexidade constante $$O(1)$$ com relação à lógica interna do código. A complexidade completa dependerá diretamente das funções chamadas (`lista_inserir`, `avl_remover`, etc.), cujas complexidades serão analisadas separadamente.
 
 
-### TAD Lista:
+### TAD Lista Sequencial  
 
-A análise a seguir considera apenas a lógica implementada no arquivo `lista.c`.
+A análise a seguir considera apenas a lógica implementada no código fornecido, desconsiderando as complexidades de funções externas chamadas.  
 
 
 1. **`lista_criar`**  
-   - **Descrição**: Aloca memória para uma lista e inicializa seu tamanho como 0.  
+   - **Descrição**: Aloca memória para uma estrutura de lista e inicializa o tamanho como 0.  
    - **Operações principais**:  
      - Alocação de memória: $$O(1)$$.  
      - Inicialização do tamanho: $$O(1)$$.  
    - **Complexidade Total**: $$O(1)$$.  
 
 2. **`lista_apagar`**  
-   - **Descrição**: Libera a memória de uma lista e define o ponteiro como `NULL`.  
+   - **Descrição**: Libera a memória da lista e define o ponteiro como `NULL`.  
    - **Operações principais**:  
      - Liberação de memória: $$O(1)$$.  
      - Atribuição de `NULL`: $$O(1)$$.  
    - **Complexidade Total**: $$O(1)$$.  
 
 3. **`lista_inserir`**  
-   - **Descrição**: Insere um elemento em ordem crescente na lista, deslocando elementos para a direita se necessário.  
+   - **Descrição**: Insere um elemento na lista em ordem crescente, deslocando elementos para abrir espaço.  
    - **Operações principais**:  
-     - Busca pela posição correta: $$O(n)$$, onde $$n$$ é o número de elementos na lista.  
-     - Deslocamento de elementos: $$O(n)$$ no pior caso (inserção no início).  
+     - Busca pela posição correta: $$O(n)$$ no pior caso (percorre toda a lista).  
+     - Verificação de duplicatas (chamada a `lista_busca`): $$O(1)$$.  
+     - Deslocamento de elementos para abrir espaço: $$O(n)$$ no pior caso (inserção no início).  
    - **Complexidade Total**: $$O(n)$$.  
 
 4. **`lista_remover`**  
    - **Descrição**: Remove um elemento da lista, deslocando elementos subsequentes para preencher o espaço.  
    - **Operações principais**:  
-     - Busca binária para encontrar o elemento: $$O(\log n)$$.  
-     - Deslocamento de elementos: $$O(n)$$ no pior caso (remoção no início).  
+     - Busca binária para encontrar a posição do elemento: $$O(\log n)$$.  
+     - Deslocamento de elementos para preencher o espaço: $$O(n)$$ no pior caso (remoção do primeiro elemento).  
    - **Complexidade Total**: $$O(n)$$.  
 
 5. **`lista_imprimir`**  
-   - **Descrição**: Imprime todos os elementos da lista, ignorando posições marcadas como `ERRO`.  
+   - **Descrição**: Imprime todos os elementos válidos da lista em ordem.  
    - **Operações principais**:  
-     - Iteração pelos elementos: $$O(n)$$.  
+     - Iteração pelos elementos da lista: $$O(n)$$.  
    - **Complexidade Total**: $$O(n)$$.  
 
 6. **`lista_busca`**  
-   - **Descrição**: Busca um elemento na lista utilizando a função de busca binária.  
+   - **Descrição**: Busca um elemento na lista utilizando a função `buscaBinariaLista`.  
    - **Operações principais**:  
-     - Chamada à função `buscaBinariaLista`: $$O(\log n)$$.  
+     - Busca binária: $$O(\log n)$$.  
    - **Complexidade Total**: $$O(\log n)$$.  
 
 7. **`lista_copiar`**  
-   - **Descrição**: Cria uma cópia da lista, inserindo elemento por elemento na nova lista.  
+   - **Descrição**: Cria uma cópia da lista original, inserindo cada elemento na nova lista.  
    - **Operações principais**:  
-     - Criação da nova lista: $$O(1)$$.  
-     - Iteração e inserção de elementos: $$O(n \cdot C_{\text{inserir}})$$, onde $$C_\text{inserir}$$ é a complexidade da função `lista_inserir`.  
-   - **Complexidade Total**: $$O(n)$$ (considerando apenas a lógica interna).  
+     - Criação de uma nova lista: $$O(1)$$.  
+     - Iteração para copiar elementos: $$O(n)$$.  
+     - Inserção de cada elemento (considerada $$O(1)$$ neste contexto): $$O(n)$$.  
+   - **Complexidade Total**: $$O(n)$$.  
 
 8. **`lista_consultar`**  
-   - **Descrição**: Consulta o elemento em uma posição específica da lista.  
+   - **Descrição**: Retorna o elemento armazenado em um índice específico da lista.  
    - **Operações principais**:  
      - Verificação de limites: $$O(1)$$.  
-     - Acesso ao elemento no índice: $$O(1)$$.  
+     - Acesso ao elemento pelo índice: $$O(1)$$.  
    - **Complexidade Total**: $$O(1)$$.  
 
 9. **`buscaBinariaLista`**  
-   - **Descrição**: Realiza busca binária recursiva para localizar uma chave em um vetor.  
+   - **Descrição**: Realiza busca binária recursiva para encontrar um elemento no vetor.  
    - **Operações principais**:  
-     - Divisão do vetor em cada chamada recursiva: $$O(\log n)$$ no pior caso.  
+     - Divisão recursiva do vetor em cada chamada: $$O(\log n)$$ no pior caso.  
    - **Complexidade Total**: $$O(\log n)$$.  
 
-**Resumo Geral:**  
-- Funções que envolvem apenas criação, liberação ou consultas diretas apresentam complexidade $$O(1)$$.  
-- Funções que manipulam a lista (como inserção e remoção) têm complexidade $$O(n)$$, devido ao deslocamento de elementos.  
-- Operações de busca se beneficiam da busca binária, com complexidade $$O(\log n)$$.
+**Resumo Geral**:  
+- Operações de criação, remoção de memória e consulta direta possuem complexidade $$O(1)$$.  
+- Operações de inserção e remoção, devido ao deslocamento de elementos, possuem complexidade $$O(n)$$.  
+- Operações de busca utilizam busca binária, com complexidade $$O(\log n)$$.  
+- A operação de copiar a lista tem complexidade $$O(n)$$, pois envolve iteração e inserção de elementos.
+
+### TAD Árvore Binária de Busca AVL  
+
+A análise a seguir considera apenas a lógica implementada no arquivo `AVL.c`.
 
 
-### TAD Arvora Binaria de Buca AVL:
+1. **`avl_criar`**  
+   - **Descrição**: Aloca memória para uma estrutura AVL, inicializa a raiz como `NULL` e o tamanho como 0.  
+   - **Operações principais**:  
+     - Alocação de memória: $$O(1)$$.  
+     - Inicialização de ponteiros e variáveis: $$O(1)$$.  
+   - **Complexidade Total**: $$O(1)$$.  
 
+2. **`avl_apagar`**  
+   - **Descrição**: Apaga todos os nós da árvore recursivamente utilizando a função auxiliar `no_apagar_recursivo`.  
+   - **Operações principais**:  
+     - Chamada recursiva para percorrer todos os nós em pós-ordem: $$O(n)$$, onde $$n$$ é o número de nós.  
+     - Liberação de memória de cada nó: $$O(1)$$ por nó.  
+   - **Complexidade Total**: $$O(n)$$.  
+
+3. **`avl_inserir`**  
+   - **Descrição**: Insere um novo nó na árvore AVL e mantém o balanceamento.  
+   - **Operações principais**:  
+     - Criação de um novo nó: $$O(1)$$.  
+     - Chamada à função auxiliar `avl_inserir_no` para percorrer a árvore e realizar a inserção e rotações: $$O(h)$$, onde $$h$$ é a altura da árvore.  
+   - **Complexidade Total**: $$O(h)$$ como se trata de uma árvore balanceada: $$O(\log n)$$.  
+
+4. **`avl_remover`**  
+   - **Descrição**: Remove um nó da árvore AVL e mantém o balanceamento.  
+   - **Operações principais**:  
+     - Busca do nó a ser removido: $$O(h)$$, onde $$h$$ é a altura da árvore.  
+     - Chamada à função auxiliar `avl_remover_no` para tratar os casos de remoção e realizar rotações: $$O(h)$$.  
+   - **Complexidade Total**: $$O(h)$$ como se trata de uma árvore balanceada: $$O(\log n)$$.  
+
+5. **`avl_get_altura`**  
+   - **Descrição**: Calcula a altura da árvore utilizando a função auxiliar `no_get_altura`.  
+   - **Operações principais**:  
+     - Cálculo recursivo da altura para cada nó: $$O(h)$$.  
+   - **Complexidade Total**: $$O(h)$$ como se trata de uma árvore balanceada: $$O(\log n)$$.  
+
+6. **`avl_get_tamanho`**  
+   - **Descrição**: Retorna o tamanho da árvore armazenado na estrutura AVL.  
+   - **Operações principais**:  
+     - Acesso direto a uma variável: $$O(1)$$.  
+   - **Complexidade Total**: $$O(1)$$.  
+
+7. **`avl_copiar`**  
+   - **Descrição**: Cria uma cópia da árvore, duplicando todos os nós com a função auxiliar `no_copiar_recursivo`.  
+   - **Operações principais**:  
+     - Chamada recursiva para percorrer e copiar cada nó: $$O(n)$$, onde $$n$$ é o número de nós.  
+   - **Complexidade Total**: $$O(n)$$.  
+
+8. **`avl_imprimir`**  
+   - **Descrição**: Imprime os elementos da árvore em ordem crescente (in-ordem) utilizando a função auxiliar `avl_imprimir_arv`.  
+   - **Operações principais**:  
+     - Percurso in-ordem para visitar todos os nós: $$O(n)$$, onde $$n$$ é o número de nós.  
+   - **Complexidade Total**: $$O(n)$$.  
+
+9. **`avl_busca`**  
+   - **Descrição**: Busca uma chave na árvore AVL usando a função auxiliar `busca_binaria_avl`.  
+   - **Operações principais**:  
+     - Busca binária recursiva até encontrar o nó ou determinar sua ausência: $$O(h)$$, onde $$h$$ é a altura da árvore.  
+   - **Complexidade Total**: $$O(h)$$ como se trata de uma árvore balanceada: $$O(\log n)$$.  
+
+10. **`avl_get_chave_raiz`**  
+    - **Descrição**: Retorna a chave armazenada na raiz da árvore ou erro se estiver vazia.  
+    - **Operações principais**:  
+      - Acesso direto ao ponteiro da raiz: $$O(1)$$.  
+    - **Complexidade Total**: $$O(1)$$.  
+
+**Resumo Geral**:  
+- Operações básicas como criação, acesso ao tamanho e chave da raiz possuem complexidade $$O(1)$$.  
+- Operações dependentes da altura (como inserção, remoção e busca) possuem complexidade $$O(h)$$ como se trata de uma árvore balanceada: $$O(\log n)$$.  
+- Operações que percorrem toda a árvore (como apagar, copiar e imprimir) possuem complexidade $$O(n)$$.
