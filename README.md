@@ -85,11 +85,37 @@ O objetivo do arquivo `lista.c` é implementar uma lista sequencial ordenada com
 
 Essa implementação prioriza eficiência, especialmente nas operações de busca e inserção, aproveitando as características de uma lista ordenada e a busca binária.
 
-
-
-
-
 ### TAD Arvora Binaria de Busca AVL:
+
+o intuito desta desta tad é implemantar uma arvore binaria de busca AVL. esta arvore tem a caracteristica de estar sempre balanceada ou seja a diferença entre a altura de qualquer subarvores esqueda e direita nunca sera maior que 1. casos isso o cora durante uma incerção ou remoção a arvore excuta rotações para corrigir o balamceamento.
+
+começamos a implementação importando a ABB.h com as definições das funções do tad, em seguia definimo a struct no e abb que seviram para organizar a abb avl.em seguida vem a definições das funções alxiliares.
+
+#### Descrição das Funções
+
+
+avl_criar
+
+
+
+avl_apagar
+avl_inserir
+avl_remover
+avl_get_altura
+avl_get_tamanho
+avl_copiar
+avl_imprimir
+avl_busca
+avl_get_chave_raiz
+
+
+
+
+
+
+
+
+
 
 ## Complexidade das operação:
 O objetivo é analisar separadamente a complexidade de cada função implementada, considerando apenas o código presente em cada uma delas. Para funções que realizam chamadas a TADs externos, a análise se limitará à lógica interna da função, desconsiderando a complexidade das funções chamadas. Ao final, será feito um levantamento geral para determinar a complexidade predominante de cada operação.
