@@ -231,74 +231,68 @@ Todas as funções do arquivo `conjunto.c` apresentam complexidade constante $$O
 
 A análise a seguir considera apenas a lógica implementada no código fornecido, desconsiderando as complexidades de funções externas chamadas.  
 
+**1. `lista_criar` e `lista_apagar`**
+- **Descrição:** Operações simples de alocação e desalocação de memória.
+- **Complexidade:** \( O(1) \) para ambas, já que alocar/desalocar uma estrutura de tamanho fixo é constante.
 
-1. **`lista_criar`**  
-   - **Descrição**: Aloca memória para uma estrutura de lista e inicializa o tamanho como 0.  
-   - **Operações principais**:  
-     - Alocação de memória: $$O(1)$$.  
-     - Inicialização do tamanho: $$O(1)$$.  
-   - **Complexidade Total**: $$O(1)$$.  
 
-2. **`lista_apagar`**  
-   - **Descrição**: Libera a memória da lista e define o ponteiro como `NULL`.  
-   - **Operações principais**:  
-     - Liberação de memória: $$O(1)$$.  
-     - Atribuição de `NULL`: $$O(1)$$.  
-   - **Complexidade Total**: $$O(1)$$.  
+**2. `lista_inserir`**
+- **Descrição:**
+  1. **Encontrar a posição de inserção:** Laço `while` percorre a lista até encontrar o primeiro elemento maior que o elemento a ser inserido.
+      - Pior caso: percorre toda a lista. \( O(n) \).
+  2. **Verificar duplicatas:** Chama `lista_busca`, que usa busca binária.
+      - Complexidade da busca binária: \( O(\log n) \).
+  3. **Inserir o elemento:** Move os elementos da posição encontrada até o final da lista uma posição para a direita.
+      - Pior caso: desloca todos os elementos. \( O(n) \).
 
-3. **`lista_inserir`**  
-   - **Descrição**: Insere um elemento na lista em ordem crescente, deslocando elementos para abrir espaço.  
-   - **Operações principais**:  
-     - Busca pela posição correta: $$O(n)$$ no pior caso (percorre toda a lista).  
-     - Verificação de duplicatas (chamada a `lista_busca`): $$O(1)$$.  
-     - Deslocamento de elementos para abrir espaço: $$O(n)$$ no pior caso (inserção no início).  
-   - **Complexidade Total**: $$O(n)$$.  
+- **Complexidade Total:** 
+  \( O(n) + O(\log n) + O(n) = O(n) \)  
+  O termo dominante é \( O(n) \).
 
-4. **`lista_remover`**  
-   - **Descrição**: Remove um elemento da lista, deslocando elementos subsequentes para preencher o espaço.  
-   - **Operações principais**:  
-     - Busca binária para encontrar a posição do elemento: $$O(\log n)$$.  
-     - Deslocamento de elementos para preencher o espaço: $$O(n)$$ no pior caso (remoção do primeiro elemento).  
-   - **Complexidade Total**: $$O(n)$$.  
 
-5. **`lista_imprimir`**  
-   - **Descrição**: Imprime todos os elementos válidos da lista em ordem.  
-   - **Operações principais**:  
-     - Iteração pelos elementos da lista: $$O(n)$$.  
-   - **Complexidade Total**: $$O(n)$$.  
+**3. `lista_remover`**
+- **Descrição:**
+  1. **Buscar o elemento a ser removido:** Usa busca binária.
+      - \( O(\log n) \).
+  2. **Remover o elemento:** Move os elementos da posição do elemento removido até o final da lista uma posição para a esquerda.
+      - Pior caso: desloca \( n-1 \) elementos. \( O(n) \).
 
-6. **`lista_busca`**  
-   - **Descrição**: Busca um elemento na lista utilizando a função `buscaBinariaLista`.  
-   - **Operações principais**:  
-     - Busca binária: $$O(\log n)$$.  
-   - **Complexidade Total**: $$O(\log n)$$.  
+- **Complexidade Total:**
+  \( O(\log n) + O(n) = O(n) \).
 
-7. **`lista_copiar`**  
-   - **Descrição**: Cria uma cópia da lista original, inserindo cada elemento na nova lista.  
-   - **Operações principais**:  
-     - Criação de uma nova lista: $$O(1)$$.  
-     - Iteração para copiar elementos: $$O(n)$$.  
-     - Inserção de cada elemento (considerada $$O(1)$$ neste contexto): $$O(n)$$.  
-   - **Complexidade Total**: $$O(n)$$.  
 
-8. **`lista_consultar`**  
-   - **Descrição**: Retorna o elemento armazenado em um índice específico da lista.  
-   - **Operações principais**:  
-     - Verificação de limites: $$O(1)$$.  
-     - Acesso ao elemento pelo índice: $$O(1)$$.  
-   - **Complexidade Total**: $$O(1)$$.  
+**4. `lista_imprimir`**
+- **Descrição:** Percorre a lista e imprime cada elemento.
+- **Complexidade:** \( O(n) \), onde \( n \) é o número de elementos na lista.
 
-9. **`buscaBinariaLista`**  
-   - **Descrição**: Realiza busca binária recursiva para encontrar um elemento no vetor.  
-   - **Operações principais**:  
-     - Divisão recursiva do vetor em cada chamada: $$O(\log n)$$ no pior caso.  
-   - **Complexidade Total**: $$O(\log n)$$.  
 
-**Resumo Geral**:  
-- Operações de criação, remoção de memória e consulta direta possuem complexidade $$O(1)$$.  
-- Operações de inserção e remoção, devido ao deslocamento de elementos, possuem complexidade $$O(n)$$.  
-- Operações de busca utilizam busca binária, com complexidade $$O(\log n)$$.  
-- A operação de copiar a lista tem complexidade $$O(n)$$, pois envolve iteração e inserção de elementos.
+**5. `lista_busca`**
+- **Descrição:** Verifica se uma chave está presente na lista usando busca binária.
+- **Complexidade:** \( O(\log n) \).
+
+
+**6. `lista_copiar`**
+- **Descrição:**
+  1. **Criar uma nova lista:** \( O(1) \).
+  2. **Inserir todos os elementos da lista original na nova lista:** Laço que percorre todos os \( n \) elementos, chamando `lista_inserir` para cada um.
+      - Cada chamada de `lista_inserir` tem complexidade \( O(n) \).
+      - Total para \( n \) elementos: \( O(n^2) \).
+
+- **Complexidade Total:** \( O(n^2) \).
+
+
+**7. `lista_consultar`**
+- **Descrição:** Acessa diretamente o índice no vetor.
+- **Complexidade:** \( O(1) \).
+
+
+**8. `buscaBinariaLista`**
+- **Descrição:** Implementação recursiva da busca binária.
+- **Complexidade:** A cada chamada, o tamanho da lista é reduzido pela metade.
+  - Total de chamadas: \( O(\log n) \).
+
+Embora algumas funções como `lista_inserir` e `lista_remover` sejam \( O(n) \), é importante considerar que, no contexto de \( n \) muito grande, o comportamento constante de funções mais rápidas (como \( O(\log n) \)) pode ser um fator relevante em comparação à soma ou multiplicação de constantes associadas a essas operações.
+
 
 ### TAD Árvore Binária de Busca AVL  
 
