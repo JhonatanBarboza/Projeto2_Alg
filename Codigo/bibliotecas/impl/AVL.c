@@ -124,7 +124,7 @@ NO *avl_inserir_no(NO *noRaiz, NO *noNovo, bool *jaInserido){
   noRaiz->FB = no_get_altura(noRaiz->noEsq) - no_get_altura(noRaiz->noDir);
 
   /*Balanceando, se necessário*/
-  if(noRaiz->FB == -2){
+  if(noRaiz->FB < -1){
     if(noRaiz->noDir->FB <= 0) noRaiz = no_rodar_esquerda(noRaiz); /*Rotação esquerda*/
     else{
       /*Rotação direita esquerda*/
@@ -133,7 +133,7 @@ NO *avl_inserir_no(NO *noRaiz, NO *noNovo, bool *jaInserido){
     }
   }
 
-  if(noRaiz->FB == 2){
+  if(noRaiz->FB > 1){
     if(noRaiz->noEsq->FB >= 0) noRaiz = no_rodar_direita(noRaiz); /*Rotação direita*/
     /*Rotação esquerda direita*/
     else{
@@ -179,12 +179,31 @@ NO *no_rodar_direita(NO *noA){
   noA->noEsq = noB->noDir;
   noB->noDir = noA;
 
-  /*Definindo os fatores de balanceamento
-  OBS: Do jeito que fizemos aqui, a complexidade pode ser afetada.
-  Podemos evitar isso usando ifs.
-  */
-  noA->FB = no_get_altura(noA->noEsq) - no_get_altura(noA->noDir);
-  noB->FB = no_get_altura(noB->noEsq) - no_get_altura(noB->noDir);
+  /*Definindo os fatores de balanceamento*/
+  if((noA->FB == -2) && (noB->FB == -2)){
+    noA->FB = 1;
+    noB->FB = 0;
+  }
+  else if((noA->FB == -2) && (noB->FB == -1)){
+    noA->FB = 0;
+    noB->FB = 0;
+  }
+  else if((noA->FB == -2) && (noB->FB == 0)){
+    noA->FB = -1;
+    noB->FB = 1;
+  }
+  else if((noA->FB == -1) && (noB->FB == -1)){
+    noA->FB = 1;
+    noB->FB = 1;
+  }
+  else if((noA->FB == -1) && (noB->FB == 0)){
+    noA->FB = 0;
+    noB->FB = 1;
+  }
+  else if((noA->FB == -1) && (noB->FB == 1)){
+    noA->FB = 0;
+    noB->FB = 2;
+  }
 
   return noB;
 }
@@ -200,7 +219,8 @@ NO *no_rodar_esquerda(NO *noA){
   /*Definindo os fatores de balanceamento
   OBS: Do jeito que fizemos aqui, a complexidade pode ser afetada.
   Podemos evitar isso usando ifs.
-  */  noA->FB = no_get_altura(noA->noEsq) - no_get_altura(noA->noDir);
+  */
+  noA->FB = no_get_altura(noA->noEsq) - no_get_altura(noA->noDir);
   noB->FB = no_get_altura(noB->noEsq) - no_get_altura(noB->noDir);
 
   return noB;
