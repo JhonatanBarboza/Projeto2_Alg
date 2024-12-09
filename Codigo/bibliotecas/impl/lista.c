@@ -9,8 +9,10 @@ struct lista_ {
   int tamanho;
 };
 
+/*Função auxiliar para a busca binária*/
 int buscaBinariaLista(int v[], int inicio, int fim, int chave);
 
+/*Cria a lista e inicializa ela*/
 LISTA *lista_criar(void){
   LISTA *lista = (LISTA *) malloc(sizeof(LISTA));
   if(lista == NULL) return NULL;
@@ -19,6 +21,7 @@ LISTA *lista_criar(void){
   return lista;
 }
 
+/*Apaga a lista*/
 void lista_apagar(LISTA **lista){
   if(*lista == NULL) return;
 
@@ -27,6 +30,7 @@ void lista_apagar(LISTA **lista){
   return;
 }
 
+/*Insere o elemento na lista ordenadamente*/
 bool lista_inserir(LISTA *lista, int elemento){ 
   if(lista == NULL) return false;
   if(lista->tamanho > TAM_MAX) return false;
@@ -49,6 +53,7 @@ bool lista_inserir(LISTA *lista, int elemento){
   return true;
 }
 
+/*Remove o elemento da lista*/
 int lista_remover(LISTA *lista, int elemento) {
   if (lista == NULL || lista->tamanho == 0) return ERRO;
 
@@ -81,7 +86,8 @@ void lista_imprimir(LISTA *lista){
   return;
 }
 
-/*Retorna a chave se ela foi encontrada, ERRO senão*/
+/*Retorna a chave se ela foi encontrada, ERRO senão
+Busca pela chave*/
 int lista_busca(LISTA *lista, int chave){
   if(lista == NULL) return ERRO;
   if(lista->tamanho == 0) return ERRO;
@@ -90,6 +96,7 @@ int lista_busca(LISTA *lista, int chave){
   return ERRO;
 }
 
+/*Retorna uma cópia da lista*/
 LISTA *lista_copiar(LISTA *lista){
   if(lista == NULL) return NULL;
 
@@ -104,7 +111,8 @@ LISTA *lista_copiar(LISTA *lista){
   return listaCopia;
 }
 
-/*Consulta pelo índice, não pela chave*/
+/*Consulta pelo índice, não pela chave
+Retorna o elemento no índice indicado*/
 int lista_consultar(LISTA *lista, int indice){
   if(lista == NULL) return ERRO;
   if((indice >= lista->tamanho) || (indice < 0)) return ERRO;
@@ -118,6 +126,7 @@ int buscaBinariaLista(int v[], int inicio, int fim, int chave){
 
   int meio = (inicio + fim) / 2;
 
+  /*Busca binária*/
   if(v[meio] == chave) return meio;
   else if(chave < v[meio]) return buscaBinariaLista(v, inicio, meio - 1, chave);
   else{
