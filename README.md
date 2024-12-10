@@ -52,7 +52,7 @@ A complexidade da função `main` é dominada pelo custo das inserções O(tamA 
 
 
 
-
+---
 
 ### TAD Conjunto:
 
@@ -145,7 +145,7 @@ Todas as funções do arquivo `conjunto.c` apresentam complexidade constante $$O
 
 
 
-
+---
 
 ### TAD Lista Sequencial  
 
@@ -234,7 +234,7 @@ Embora algumas funções como `lista_inserir` e `lista_remover` sejam $$ O(n) $$
 
 
 
-
+---
 
 ### TAD Árvore Binária de Busca AVL  
 
