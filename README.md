@@ -41,19 +41,6 @@ O usuário escolhe a operação a ser realizada entre os conjuntos: **PERTENCE**
 **Resumo**:  
 A complexidade da função `main` é dominada pelo custo das inserções O(tamA C inserir + tamB C inserir) e pela operação escolhida, variando conforme a estrutura utilizada.
 
-
-
-
-
-
-
-
-
-
-
-
----
-
 ### TAD Conjunto:
 
 O código importa os arquivos `list.h`, `avl.h` e `conjunto.h` e define a estrutura `conjunto`. Essa estrutura contém o campo `TAD`, que indica o tipo de estrutura de dados utilizada (lista ou árvore binária), o tamanho do conjunto e dois ponteiros: um para a lista (`conjuntoLista`) e outro para a árvore binária (`conjuntoAVL`). Apenas um desses ponteiros será utilizado, dependendo da estrutura escolhida.
@@ -128,25 +115,6 @@ A ideia principal das funções é gerenciar as chamadas para as funções espec
 **Resumo Geral:**  
 Todas as funções do arquivo `conjunto.c` apresentam complexidade constante $$O(1)$$ com relação à lógica interna do código. A complexidade completa dependerá diretamente das funções chamadas (`lista_inserir`, `avl_remover`, etc.), cujas complexidades serão analisadas separadamente.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
----
-
 ### TAD Lista Sequencial  
 
 O objetivo do arquivo `lista.c` é implementar uma lista sequencial ordenada com suporte a busca binária. Ele contém as principais funções relacionadas à manipulação da lista, como inserção, remoção, busca binária e outras operações úteis. Abaixo segue uma breve descrição de cada função: 
@@ -214,27 +182,6 @@ O objetivo do arquivo `lista.c` é implementar uma lista sequencial ordenada com
   - Total de chamadas: $$ O(\log n) $$.
 
 Embora algumas funções como `lista_inserir` e `lista_remover` sejam $$ O(n) $$, é importante considerar que, no contexto de $$ n $$ muito grande, o comportamento constante de funções mais rápidas (como $$ O(\log n) $$) pode ser um fator relevante em comparação à soma ou multiplicação de constantes associadas a essas operações.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
----
 
 ### TAD Árvore Binária de Busca AVL  
 
