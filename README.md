@@ -123,65 +123,65 @@ O objetivo do arquivo `lista.c` é implementar uma lista sequencial ordenada com
 
 **1. `lista_criar` e `lista_apagar`**
 - **Descrição:** Operações simples de alocação e desalocação de memória.
-- **Complexidade:** $$ O(1) $$ para ambas, já que alocar/desalocar uma estrutura de tamanho fixo é constante.
+- **Complexidade:** $$O(1)$$ para ambas, já que alocar/desalocar uma estrutura de tamanho fixo é constante.
 
 
 **2. `lista_inserir`**
 - **Descrição:**
   1. **Encontrar a posição de inserção:** Laço `while` percorre a lista até encontrar o primeiro elemento maior que o elemento a ser inserido.
-      - Pior caso: percorre toda a lista. $$ O(n) $$.
+      - Pior caso: percorre toda a lista. $$O(n)$$.
   2. **Verificar duplicatas:** Chama `lista_busca`, que usa busca binária.
-      - Complexidade da busca binária: $$ O(\log n) $$.
+      - Complexidade da busca binária: $$O(\log n)$$.
   3. **Inserir o elemento:** Move os elementos da posição encontrada até o final da lista uma posição para a direita.
-      - Pior caso: desloca todos os elementos. $$ O(n) $$.
+      - Pior caso: desloca todos os elementos. $$O(n)$$.
 
 - **Complexidade Total:** 
-  $$ O(n) + O(\log n) + O(n) = O(n) $$  
-  O termo dominante é $$ O(n) $$.
+  $$O(n) + O(\log n) + O(n) = O(n)$$  
+  O termo dominante é $$O(n)$$.
 
 
 **3. `lista_remover`**
 - **Descrição:**
   1. **Buscar o elemento a ser removido:** Usa busca binária.
-      - $$ O(\log n) $$.
+      - $$O(\log n)$$.
   2. **Remover o elemento:** Move os elementos da posição do elemento removido até o final da lista uma posição para a esquerda.
-      - Pior caso: desloca $$ n-1 $$ elementos. $$ O(n) $$.
+      - Pior caso: desloca $$n-1$$ elementos. $$O(n)$$.
 
 - **Complexidade Total:**
-  $$ O(\log n) + O(n) = O(n) $$.
+  $$O(\log n) + O(n) = O(n)$$.
 
 
 **4. `lista_imprimir`**
 - **Descrição:** Percorre a lista e imprime cada elemento.
-- **Complexidade:** $$ O(n) $$, onde $$ n $$ é o número de elementos na lista.
+- **Complexidade:** $$O(n)$$, onde $$ n $$ é o número de elementos na lista.
 
 
 **5. `lista_busca`**
 - **Descrição:** Verifica se uma chave está presente na lista usando busca binária.
-- **Complexidade:** $$ O(\log n) $$.
+- **Complexidade:** $$O(\log n)$$.
 
 
 **6. `lista_copiar`**
 - **Descrição:**
-  1. **Criar uma nova lista:** $$ O(1) $$.
+  1. **Criar uma nova lista:** $$O(1)$$.
   2. **Inserir todos os elementos da lista original na nova lista:** Laço que percorre todos os $$ n $$ elementos, chamando `lista_inserir` para cada um.
-      - Cada chamada de `lista_inserir` tem complexidade $$ O(n) $$.
-      - Total para $$ n $$ elementos: $$ O(n^2) $$.
+      - Cada chamada de `lista_inserir` tem complexidade $$O(n)$$.
+      - Total para $$ n $$ elementos: $$O(n^2)$$.
 
-- **Complexidade Total:** $$ O(n^2) $$.
+- **Complexidade Total:** $$O(n^2)$$.
 
 
 **7. `lista_consultar`**
 - **Descrição:** Acessa diretamente o índice no vetor.
-- **Complexidade:** $$ O(1) $$.
+- **Complexidade:** $$O(1)$$.
 
 
 **8. `buscaBinariaLista`**
 - **Descrição:** Implementação recursiva da busca binária.
 - **Complexidade:** A cada chamada, o tamanho da lista é reduzido pela metade.
-  - Total de chamadas: $$ O(\log n) $$.
+  - Total de chamadas: $$O(\log n)$$.
 
-Embora algumas funções como `lista_inserir` e `lista_remover` sejam $$ O(n) $$, é importante considerar que, no contexto de $$ n $$ muito grande, o comportamento constante de funções mais rápidas (como $$ O(\log n) $$) pode ser um fator relevante em comparação à soma ou multiplicação de constantes associadas a essas operações.
+Embora algumas funções como `lista_inserir` e `lista_remover` sejam $$ O(n) $$, é importante considerar que, no contexto de $$n$$ muito grande, o comportamento constante de funções mais rápidas (como $$O(\log n)$$) pode ser um fator relevante em comparação à soma ou multiplicação de constantes associadas a essas operações.
 
 ### TAD Árvore Binária de Busca AVL  
 
@@ -196,20 +196,20 @@ A implementação inclui definições auxiliares para criar, remover, balancear 
   - `avl_criar`: Aloca memória para uma estrutura AVL e inicializa seus atributos.  
   - `avl_apagar`: Desaloca recursivamente todos os nós da árvore e, por fim, desaloca a estrutura AVL.  
 - **Complexidade:**  
-  - `avl_criar`: $$ O(1) $$, pois envolve apenas operações de alocação e inicialização.  
-  - `avl_apagar`: $$ O(n) $$, onde $$ n $$ é o número de nós da árvore. A recursão percorre todos os nós para desalocá-los.
+  - `avl_criar`: $$O(1)$$, pois envolve apenas operações de alocação e inicialização.  
+  - `avl_apagar`: $$O(n)$$, onde $$n$$ é o número de nós da árvore. A recursão percorre todos os nós para desalocá-los.
 
 
 **2. `avl_inserir` e `avl_inserir_no`**  
 - **Descrição:**  
   1. **Inserção de um nó:** A função `avl_inserir_no` navega recursivamente pela árvore para encontrar a posição adequada para inserir o nó, similar à inserção em uma árvore binária de busca.  
   2. **Balanceamento:** Após a inserção, a função verifica o fator de balanceamento ($$ FB $$) e aplica rotações, se necessário.  
-  - **Rotação:** A rotação esquerda, direita, ou dupla requer acesso a um número constante de nós ($$ O(1) $$).  
+  - **Rotação:** A rotação esquerda, direita, ou dupla requer acesso a um número constante de nós ($$O(1)$$).  
 
 - **Complexidade:**  
-  - Inserir um nó: No pior caso, a altura da árvore é percorrida, o que equivale a $$ O(\log n) $$ para árvores balanceadas.  
-  - Balanceamento: Como as rotações têm complexidade $$ O(1) $$, o balanceamento não altera a complexidade total.  
-  - **Total:** $$ O(\log n) + O(1) = O(\log n) $$.
+  - Inserir um nó: No pior caso, a altura da árvore é percorrida, o que equivale a $$O(\log n)$$ para árvores balanceadas.  
+  - Balanceamento: Como as rotações têm complexidade $$O(1)$$, o balanceamento não altera a complexidade total.  
+  - **Total:** $$O(\log n) + O(1) = O(\log n)$$.
 
 
 **3. `no_get_altura`**  
@@ -231,37 +231,37 @@ A implementação inclui definições auxiliares para criar, remover, balancear 
   3. **Balanceamento:** Após a remoção, a função recalcula o fator de balanceamento e aplica rotações, se necessário.  
 
 - **Complexidade:**  
-  - Buscar o nó: $$ O(\log n) $$.  
-  - Ajustar a árvore: As rotações têm custo $$ O(1) $$.  
-  - **Total:** $$ O(\log n) + O(1) = O(\log n) $$.
+  - Buscar o nó: $$O(\log n)$$.  
+  - Ajustar a árvore: As rotações têm custo $$O(1)$$.  
+  - **Total:** $$O(\log n) + O(1) = O(\log n)$$.
 
 
 **5. `avl_busca` e `busca_binaria_avl`**  
 - **Descrição:**  
   Navega recursivamente pela árvore, reduzindo pela metade o espaço de busca em cada passo (busca binária).  
 - **Complexidade:**  
-  - **Total:** $$ O(\log n) $$, pois a altura de uma árvore AVL é $$ O(\log n) $$.
+  - **Total:** $$O(\log n)$$, pois a altura de uma árvore AVL é $$O(\log n)$$.
 
 
 **6. `no_rodar_direita` e `no_rodar_esquerda`**  
 - **Descrição:**  
   Ambas executam uma rotação entre um nó e seus filhos, ajustando os ponteiros e recalculando o fator de balanceamento.  
 - **Complexidade:**  
-  - **Total:** $$ O(1) $$, pois afetam um número constante de nós.  
+  - **Total:** $$O(1)$$, pois afetam um número constante de nós.  
 
 
 **7. `no_copiar_recursivo` e `avl_copiar`**  
 - **Descrição:**  
   Percorrem todos os nós da árvore original e criam uma nova cópia, incluindo todos os seus descendentes.  
 - **Complexidade:**  
-  - **Total:** $$ O(n) $$, onde $$ n $$ é o número de nós na árvore.  
+  - **Total:** $$O(n)$$, onde $$n$$ é o número de nós na árvore.  
 
 
 **8. `avl_imprimir` e `avl_imprimir_arv`**  
 - **Descrição:**  
   Percorrem a árvore em ordem (in-ordem) para imprimir seus elementos.  
 - **Complexidade:**  
-  - **Total:** $$ O(n) $$, pois todos os nós são visitados uma vez.  
+  - **Total:** $$O(n)$$, pois todos os nós são visitados uma vez.  
 
 
 A implementação assegura que as operações de busca, inserção e remoção sejam executadas de forma eficiente, com complexidade garantida de $$O(\log n)$$ no pior caso, graças ao balanceamento automático proporcionado pelas rotações AVL. 
