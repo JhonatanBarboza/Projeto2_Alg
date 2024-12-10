@@ -12,6 +12,7 @@ A escolha de implementar o TAD com uma lista utilizando busca binária deve-se a
 
 O objetivo é analisar separadamente a complexidade de cada função implementada, considerando apenas o código presente em cada uma delas. Para funções que realizam chamadas a TADs externos, a análise se limitará à lógica interna da função, desconsiderando a complexidade das funções chamadas. Ao final, será feito um levantamento geral para determinar a complexidade predominante de cada operação.
 
+---
 
 ### Função main 
 
@@ -41,18 +42,7 @@ O usuário escolhe a operação a ser realizada entre os conjuntos: **PERTENCE**
 **Resumo**:  
 A complexidade da função `main` é dominada pelo custo das inserções O(tamA C inserir + tamB C inserir) e pela operação escolhida, variando conforme a estrutura utilizada.
 
-
-
-
-
-
-
-
-
-
-
-
-
+---
 
 ### TAD Conjunto:
 
@@ -127,6 +117,7 @@ A ideia principal das funções é gerenciar as chamadas para as funções espec
 **Resumo Geral:**  
 Todas as funções do arquivo `conjunto.c` apresentam complexidade constante $$O(1)$$ com relação à lógica interna do código. A complexidade completa dependerá diretamente das funções chamadas (`lista_inserir`, `avl_remover`, etc.), cujas complexidades serão analisadas separadamente.
 
+---
 
 ### TAD Lista Sequencial  
 
@@ -194,10 +185,7 @@ O objetivo do arquivo `lista.c` é implementar uma lista sequencial ordenada com
 
 Embora algumas funções como `lista_inserir` e `lista_remover` sejam $$ O(n) $$, é importante considerar que, no contexto de $$ n $$ muito grande, o comportamento constante de funções mais rápidas (como $$ O(\log n) $$) pode ser um fator relevante em comparação à soma ou multiplicação de constantes associadas a essas operações.
 
-
-
-
-
+---
 
 ### TAD Árvore Binária de Busca AVL  
 
