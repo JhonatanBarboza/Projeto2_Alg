@@ -1,16 +1,3 @@
-A FAZER:
-Arquivo TXT: um breve relatório justificando as Estruturas de Dados escolhidas
-para representar Conjuntos e a complexidade computacional de tempo (Big Oh) de
-cada uma das operações (básicas e específicas). A complexidade deve ser apresenta
-como uma análise justificada* das operações e não apenas o Big Oh final. Por
-exemplo, suponha 2 algoritmos, um é O(1n) = O(n) e o outro é O(n) + O(n) = O(2n),
-que no fim é O(n). Nos casos em análise no projeto, em geral, a complexidade final de
-um algoritmo não muda (no exemplo ambos são O(n)), mas para n muito grande, o
-valor da constante pode fazer diferença (no exemplo O(1n) é melhor que O(2n)). *O
-justificada implica em analisar e explicar a composição das operações encontrando as
-complexidades parciais e montando uma equação que represente a complexidade.
-
-
 ________________
 ICMC - Instituto de Ciências Matemáticas e da Computação  
 Disciplina: SCC0202 - Algoritmo e Estrutura de Dados I
@@ -23,7 +10,7 @@ Descrição do projeto:
 Escolhemos implementar os TADs utilizando uma lista sequencial ordenada, uma árvore binária de busca AVL e um TAD Conjunto, responsável por gerenciar as operações durante a execução.
 
 Justificativa:
-A escolha de implementar o TAD lista sequencial ordenada se deve à utilização da busca binária, que pode ser realizada em O(\log n). Apesar de as operações de inserção e remoção apresentarem complexidade O(n), no geral, o desempenho é satisfatório em cenários onde a busca é predominante. Já a árvore binária de busca AVL foi escolhida por sua eficiência consistente, com complexidade O(\log n) para as operações de busca, inserção e remoção, garantindo bom desempenho mesmo no pior caso, além do fato de ser uma estrutura encadeada (menor consumo de espaço).
+A escolha de implementar o TAD lista sequencial ordenada se deve à utilização da busca binária, que pode ser realizada em O(log(n)). Apesar de as operações de inserção e remoção apresentarem complexidade O(n), no geral, o desempenho é satisfatório em cenários onde a busca é predominante. Já a árvore binária de busca AVL foi escolhida por sua eficiência consistente, com complexidade O(log(n)) para as operações de busca, inserção e remoção, garantindo bom desempenho mesmo no pior caso, além do fato de ser uma estrutura encadeada (menor consumo de espaço).
 
 Main:
   A função main gerencia as operações e o fluxo do programa. Inicialmente, ela solicita ao usuário que escolha a estrutura de dados a ser utilizada (0 para lista e 1 para ABB AVL). Com base nessa escolha, dois conjuntos (conjA e conjB) são criados utilizando a estrutura selecionada.
@@ -43,14 +30,14 @@ TAD Lista Sequencial Ordenada
       * Operações principais:
           * Alocação de memória: O(1).
           * Inicialização do tamanho: O(1).
-      * Complexidade Total: O(1).
+      * Complexidade Total: O(2).
 
     2. lista_apagar
       * Descrição: Libera a memória da lista e define o ponteiro como NULL.
       * Operações principais:
         * Liberação de memória: O(1).
         * Atribuição de NULL: O(1).
-      * Complexidade Total: O(1).
+      * Complexidade Total: O(2).
 
     3. lista_inserir
       * Descrição: Insere um elemento na lista em ordem crescente, deslocando elementos para abrir espaço.
@@ -58,14 +45,14 @@ TAD Lista Sequencial Ordenada
         * Busca pela posição correta: O(n) no pior caso (percorre toda a lista).
         * Verificação de duplicatas (chamada a lista_busca): O(1).
         * Deslocamento de elementos para abrir espaço: O(n) no pior caso (inserção no início).
-      * Complexidade Total: O(n).
+      * Complexidade Total: O(2n + 1).
 
     4. lista_remover
       * Descrição: Remove um elemento da lista, deslocando elementos subsequentes para preencher o espaço.
       * Operações principais:
-        * Busca binária para encontrar a posição do elemento: O(\log n).
+        * Busca binária para encontrar a posição do elemento: O(log n).
         * Deslocamento de elementos para preencher o espaço: O(n) no pior caso (remoção do primeiro elemento).
-      * Complexidade Total: O(n).
+      * Complexidade Total: O(log(n) + n).
 
     5. lista_imprimir
       * Descrição: Imprime todos os elementos válidos da lista em ordem.
@@ -76,14 +63,14 @@ TAD Lista Sequencial Ordenada
     6. lista_busca
       * Descrição: Busca um elemento na lista utilizando a função buscaBinariaLista.
       * Operações principais:
-        * Busca binária: O(\log n).
-      * Complexidade Total: O(\log n).
+        * Busca binária: O(log(n)).
+      * Complexidade Total: O(log(n)).
 
       6.1. buscaBinariaLista
       * Descrição: Realiza busca binária recursiva para encontrar um elemento no vetor.
       * Operações principais:
-          * Divisão recursiva do vetor em cada chamada: O(\log n) no pior caso.
-      * Complexidade Total: O(\log n).
+          * Divisão recursiva do vetor em cada chamada: O(log(n)) no pior caso.
+      * Complexidade Total: O(log(n)).
 
     7. lista_copiar
       * Descrição: Cria uma cópia da lista original, inserindo cada elemento na nova lista.
@@ -91,14 +78,14 @@ TAD Lista Sequencial Ordenada
           * Criação de uma nova lista: O(1).
           * Iteração para copiar elementos: O(n).
           * Inserção de cada elemento (considerada O(1) neste contexto): O(n).
-      * Complexidade Total: O(n).
+      * Complexidade Total: O(2n + 1).
 
     8. lista_consulta
       * Descrição: Retorna o elemento armazenado em um índice específico da lista.
       * Operações principais:
           * Verificação de limites: O(1).
           * Acesso ao elemento pelo índice: O(1).
-      * Complexidade Total: O(1).
+      * Complexidade Total: O(2).
 
 
 TAD Árvore Binária de Busca AVL
@@ -112,34 +99,34 @@ TAD Árvore Binária de Busca AVL
       * Operações principais:
           * Alocação de memória: O(1).
           * Inicialização de ponteiros e variáveis: O(1).
-      * Complexidade Total: O(1).
+      * Complexidade Total: O(2).
 
     2. avl_apagar
       * Descrição: Apaga todos os nós da árvore recursivamente utilizando a função auxiliar no_apagar_recursivo.
       * Operações principais:
           * Chamada recursiva para percorrer todos os nós em pós-ordem: O(n), onde n é o número de nós.
           * Liberação de memória de cada nó: O(1) por nó.
-      * Complexidade Total: O(n).
+      * Complexidade Total: O(2n).
 
     3. avl_inserir
       * Descrição: Insere um novo nó na árvore AVL e mantém o balanceamento.
       * Operações principais:
           * Criação de um novo nó: O(1).
           * Chamada à função auxiliar avl_inserir_no para percorrer a árvore e realizar a inserção e rotações: O(h), onde h é a altura da árvore.
-      * Complexidade Total: O(h) como se trata de uma árvore balanceada: O(\log n).
+      * Complexidade Total: O(h) como se trata de uma árvore balanceada: O(log(n) + 1).
 
     4. avl_remover
       * Descrição: Remove um nó da árvore AVL e mantém o balanceamento.
       * Operações principais:
           * Busca do nó a ser removido: O(h), onde h é a altura da árvore.
           * Chamada à função auxiliar avl_remover_no para tratar os casos de remoção e realizar rotações: O(h).
-      * Complexidade Total: O(h) como se trata de uma árvore balanceada: O(\log n).
+      * Complexidade Total: O(2h) como se trata de uma árvore balanceada: O(2 log(n)).
 
     5. avl_get_altura
       * Descrição: Calcula a altura da árvore utilizando a função auxiliar no_get_altura.
       * Operações principais:
           * Cálculo recursivo da altura para cada nó: O(h).
-      * Complexidade Total: O(h) como se trata de uma árvore balanceada: O(\log n).
+      * Complexidade Total: O(h) como se trata de uma árvore balanceada: O(log(n)).
 
     6. avl_get_tamanho
       * Descrição: Retorna o tamanho da árvore armazenado na estrutura AVL.
@@ -163,7 +150,7 @@ TAD Árvore Binária de Busca AVL
       * Descrição: Busca uma chave na árvore AVL usando a função auxiliar busca_binaria_avl.
       * Operações principais:
           * Busca binária recursiva até encontrar o nó ou determinar sua ausência: O(h), onde h é a altura da árvore.
-      * Complexidade Total: O(h) como se trata de uma árvore balanceada: O(\log n).
+      * Complexidade Total: O(h) como se trata de uma árvore balanceada: O(log(n)).
 
     10. avl_get_chave_raiz
       * Descrição: Retorna a chave armazenada na raiz da árvore ou erro se estiver vazia.
@@ -189,41 +176,41 @@ TAD Conjunto:
       * Operações principais:
           * Liberação do conjunto com chamada à função específica (detalhada posteriormente).
           * Liberação da memória do próprio conjunto.
-      * Complexidade Total: O(1), desconsiderando a complexidade das funções chamadas.
+      * Complexidade Total: O(2n), pior caso é o TAD AVL.
 
     3. conjunto_inserir
       * Descrição: Insere um elemento no conjunto e incrementa o tamanho.
       * Operações principais:
           * Verifica o tipo de estrutura e chama a função correspondente para inserção.
           * Incrementa o tamanho do conjunto.
-      * Complexidade Total: O(1), desconsiderando a complexidade da função chamada.
+      * Complexidade Total: O(2n + 1), pior caso é o TAD Lista.
 
     4. conjunto_remover
       * Descrição: Remove um elemento do conjunto e decrementa o tamanho.
       * Operações principais:
           * Verifica o tipo de estrutura e chama a função correspondente para remoção.
           * Atualiza o tamanho do conjunto.
-      * Complexidade Total: O(1), desconsiderando a complexidade da função chamada.
+      * Complexidade Total: O(log(n) + n), pior caso é o TAD Lista.
 
     5. conjunto_imprimir
       * Descrição: Imprime os elementos do conjunto.
       * Operações principais:
           * Verifica o tipo de estrutura e chama a função de impressão correspondente.
-      * Complexidade Total: O(1), desconsiderando a complexidade da função chamada.
+      * Complexidade Total: O(n).
 
     6. conjunto_pertence
       * Descrição: Verifica se um elemento pertence ao conjunto.
       * Operações principais:
           * Chama a função de busca correspondente à estrutura escolhida.
           * Retorna o resultado da busca.
-      * Complexidade Total: O(1), desconsiderando a complexidade da função chamada.
+      * Complexidade Total: O(log(n)).
 
     7. conjunto_uniao
       * Descrição: Realiza a união de dois conjuntos.
       * Operações principais:
           * Copia o conjunto A.
           * Chama as funções de inserção para adicionar os elementos do conjunto B.
-      * Complexidade Total: O(1), desconsiderando a complexidade das funções chamadas.
+      * Complexidade Total: O(2nA + 1 + nB), pior caso é o TAD Lista.
 
     8. conjunto_interseccao
       * Descrição: Calcula a interseção de dois conjuntos.
@@ -231,11 +218,11 @@ TAD Conjunto:
           * Cria um novo conjunto.
           * Chama a função de busca para verificar a presença de elementos nos dois conjuntos.
           * Insere os elementos encontrados na interseção.
-      * Complexidade Total: O(1), desconsiderando a complexidade das funções chamadas.
+      * Complexidade Total: O(nA log(nA) + nB log(nB)), desconsiderando a complexidade das funções chamadas.
 
     9. conjunto_copiar
       * Descrição: Cria uma cópia de um conjunto.
       * Operações principais:
           * Cria um novo conjunto.
           * Chama a função de cópia correspondente à estrutura utilizada.
-      * Complexidade Total: O(1), desconsiderando a complexidade das funções chamadas.
+      * Complexidade Total: O(2n + 1), pior caso é o TAD Lista.
